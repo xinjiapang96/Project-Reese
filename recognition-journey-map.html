@@ -1,0 +1,759 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Recognition Ecosystem Journey Map</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --canvas: #f5f7fb;
+      --ink: #1f2937;
+      --muted: #5f6b7a;
+      --subtle: #eef2f7;
+      --line: #d7dde8;
+      --panel: #ffffff;
+      --shadow: 0 16px 36px rgba(31, 41, 55, 0.1);
+      --blue: #2563eb;
+      --teal: #0f766e;
+      --amber: #b45309;
+      --rose: #be123c;
+      --slate: #475569;
+      --stage-header-row: 160px;
+      --current-state-row: 238px;
+      --future-experience-row: 500px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Segoe UI", Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.86), rgba(245, 247, 251, 0.98)),
+        linear-gradient(90deg, rgba(37, 99, 235, 0.08), rgba(15, 118, 110, 0.06) 45%, rgba(180, 83, 9, 0.06)),
+        var(--canvas);
+      color: var(--ink);
+    }
+
+    button {
+      font: inherit;
+    }
+
+    .page {
+      width: min(1880px, 100%);
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    .map-canvas {
+      min-width: 1460px;
+      background: rgba(255, 255, 255, 0.76);
+      border: 1px solid rgba(215, 221, 232, 0.95);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      padding: 24px;
+      overflow: hidden;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      gap: 24px;
+      align-items: flex-start;
+      margin-bottom: 16px;
+    }
+
+    .title-block {
+      max-width: 980px;
+    }
+
+    .eyebrow {
+      margin: 0 0 8px;
+      color: var(--blue);
+      font-size: 12px;
+      font-weight: 750;
+      letter-spacing: 0;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 32px;
+      line-height: 1.15;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      margin: 9px 0 0;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.5;
+    }
+
+    .stage-column:not(:last-child)::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      right: -16px;
+      width: 16px;
+      height: 2px;
+      background: #aab6c7;
+      transform: translateY(-50%);
+      z-index: 2;
+    }
+
+    .stage-column:not(:last-child)::before {
+      content: "";
+      position: absolute;
+      top: 50%;
+      right: -18px;
+      width: 8px;
+      height: 8px;
+      border-top: 2px solid #aab6c7;
+      border-right: 2px solid #aab6c7;
+      transform: translateY(-50%) rotate(45deg);
+      z-index: 3;
+    }
+
+    .journey-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 18px;
+      align-items: stretch;
+    }
+
+    .journey-layout,
+    .swimlane-layout {
+      display: grid;
+      grid-template-columns: 132px minmax(0, 1fr);
+      gap: 18px;
+      align-items: start;
+    }
+
+    .section-label-rail {
+      display: grid;
+      grid-template-rows: var(--stage-header-row) var(--current-state-row) var(--future-experience-row);
+      row-gap: 14px;
+      min-height: auto;
+    }
+
+    .universal-label {
+      width: 100%;
+      height: 100%;
+      border-right: 3px solid #d7dde8;
+      color: #334155;
+      padding: 8px 12px 8px 0;
+      font-size: 12px;
+      font-weight: 850;
+      line-height: 1.25;
+      letter-spacing: 0;
+      text-transform: uppercase;
+      text-align: right;
+    }
+
+    .section-label-rail .current-label {
+      align-self: stretch;
+      grid-row: 2;
+    }
+
+    .section-label-rail .stage-label {
+      align-self: stretch;
+      grid-row: 1;
+    }
+
+    .section-label-rail .future-label {
+      align-self: stretch;
+      grid-row: 3;
+    }
+
+    .stage-column {
+      position: relative;
+      border: 0;
+      border-radius: 8px;
+      background: transparent;
+      min-height: auto;
+      padding: 0 16px 16px;
+      display: grid;
+      grid-template-rows: var(--stage-header-row) var(--current-state-row) var(--future-experience-row);
+      row-gap: 14px;
+      align-items: stretch;
+      box-shadow: none;
+      overflow: visible;
+    }
+
+    .stage-header {
+      margin: 0;
+      padding: 17px 16px 18px;
+      min-height: 0;
+      height: 100%;
+      background:
+        linear-gradient(180deg, color-mix(in srgb, var(--accent) 13%, #ffffff), var(--tint));
+      border-top: 5px solid var(--accent);
+      border-bottom: 1px solid color-mix(in srgb, var(--accent) 20%, #d7dde8);
+      border-radius: 8px;
+    }
+
+    .stage-kicker {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+
+    .stage-number {
+      width: 34px;
+      height: 34px;
+      border-radius: 7px;
+      display: grid;
+      place-items: center;
+      background: rgba(255, 255, 255, 0.72);
+      color: var(--accent);
+      font-weight: 800;
+      font-size: 15px;
+      border: 1px solid color-mix(in srgb, var(--accent) 18%, #ffffff);
+    }
+
+    .stage-type {
+      border: 1px solid color-mix(in srgb, var(--accent) 28%, #ffffff);
+      background: rgba(255, 255, 255, 0.68);
+      color: var(--accent);
+      border-radius: 999px;
+      padding: 5px 9px;
+      font-size: 11px;
+      font-weight: 750;
+      white-space: nowrap;
+    }
+
+    .stage-title {
+      margin: 0;
+      min-height: auto;
+      font-size: 22px;
+      line-height: 1.18;
+      letter-spacing: 0;
+    }
+
+    .stage-subtitle {
+      margin: 8px 0 0;
+      max-width: 280px;
+      color: #475569;
+      font-size: 13px;
+      line-height: 1.4;
+      font-weight: 650;
+    }
+
+    .stage-group {
+      border-radius: 8px;
+      padding: 13px;
+      min-height: 0;
+    }
+
+    .stage-group + .stage-group {
+      margin-top: 0;
+    }
+
+    .current-state,
+    .future-experience {
+      border: 1px solid #e1e6ef;
+      background: #ffffff;
+      box-shadow: 0 6px 18px rgba(31, 41, 55, 0.04);
+    }
+
+    .future-experience {
+      display: grid;
+      grid-template-rows: 72px 124px 104px 90px;
+      row-gap: 10px;
+    }
+
+    .goal {
+      margin: 0;
+      color: var(--ink);
+      font-size: 14px;
+      line-height: 1.45;
+      font-weight: 650;
+    }
+
+    .goal strong {
+      color: var(--accent);
+      display: block;
+      font-size: 11px;
+      line-height: 1.2;
+      margin-bottom: 5px;
+      text-transform: uppercase;
+    }
+
+    .section {
+      margin-top: 14px;
+      padding-top: 13px;
+      border-top: 1px solid var(--line);
+    }
+
+    .stage-group .section:first-of-type {
+      border-top: 0;
+      padding-top: 0;
+      margin-top: 0;
+    }
+
+    .section.no-divider {
+      border-top: 0;
+      padding-top: 0;
+    }
+
+    .future-experience .section {
+      margin-top: 0;
+      padding-top: 0;
+      border-top: 0;
+      min-height: 0;
+    }
+
+    .section h3 {
+      margin: 0 0 8px;
+      color: #354153;
+      font-size: 11px;
+      line-height: 1.25;
+      letter-spacing: 0;
+      text-transform: uppercase;
+    }
+
+    ul {
+      margin: 0;
+      padding-left: 17px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.42;
+    }
+
+    li + li {
+      margin-top: 5px;
+    }
+
+    .insight-block {
+      border: 0;
+      background: transparent;
+      border-radius: 0;
+      padding: 0;
+    }
+
+    .insight-block h3 {
+      margin: 0 0 8px;
+      color: var(--accent);
+      font-size: 11px;
+      text-transform: uppercase;
+    }
+
+    .insight-block ul {
+      color: #334155;
+    }
+
+    .opportunity-copy {
+      margin: 0;
+      color: #334155;
+      font-size: 13px;
+      line-height: 1.48;
+    }
+
+    .swimlane {
+      margin-top: 0;
+      background: #ffffff;
+      padding: 2px 0 4px;
+    }
+
+    .swimlane-layout {
+      margin-top: 22px;
+      align-items: stretch;
+    }
+
+    .swimlane-label-rail {
+      display: block;
+      height: 100%;
+      min-height: auto;
+      padding-top: 0;
+    }
+
+    .swimlane-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 18px;
+      align-items: center;
+    }
+
+    .swimlane-row + .swimlane-row {
+      margin-top: 8px;
+    }
+
+    .touchpoint-bar {
+      min-height: 34px;
+      border: 1px solid color-mix(in srgb, var(--bar-color) 22%, #d7dde8);
+      border-radius: 999px;
+      background: var(
+        --bar-gradient,
+        linear-gradient(90deg, color-mix(in srgb, var(--bar-color) 14%, #ffffff), color-mix(in srgb, var(--bar-color) 8%, #ffffff))
+      );
+      color: #334155;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 12px;
+      font-size: 12px;
+      line-height: 1.25;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.75);
+    }
+
+    .touchpoint-bar strong {
+      color: var(--bar-color);
+      font-weight: 850;
+      white-space: nowrap;
+    }
+
+    .touchpoint-bar span {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .footer-note {
+      margin-top: 16px;
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      align-items: center;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    @media (max-width: 1200px) {
+      .page {
+        overflow-x: auto;
+      }
+    }
+
+    @media print {
+      body {
+        background: #ffffff;
+      }
+
+      .page {
+        padding: 0;
+      }
+
+      .map-canvas {
+        box-shadow: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <section class="map-canvas" id="capture">
+      <header class="topbar">
+        <div class="title-block">
+          <p class="eyebrow">Recognition Ecosystem Journey Map</p>
+          <h1>Employee recognition journey across the flow of work</h1>
+          <p class="subtitle">A horizontal product journey map showing how recognition is discovered, sent, celebrated, remembered, and translated into organizational insight.</p>
+        </div>
+      </header>
+
+      <div class="journey-layout">
+      <aside class="section-label-rail" aria-hidden="true">
+        <div class="universal-label stage-label">Journey Stages</div>
+        <div class="universal-label current-label">Current State</div>
+        <div class="universal-label future-label">Future Experience</div>
+      </aside>
+      <section class="journey-grid" aria-label="Horizontal journey map">
+        <article class="stage-column" style="--accent:#2563eb;--tint:#eaf1ff">
+          <div class="stage-header">
+            <div class="stage-kicker">
+              <span class="stage-number">1</span>
+              <span class="stage-type">Discovery</span>
+            </div>
+            <h2 class="stage-title">Discover Contributions</h2>
+            <p class="stage-subtitle">Identify contributors worth recognizing.</p>
+          </div>
+          <div class="stage-group current-state">
+          <div class="section insight-block">
+            <h3>Current Challenges</h3>
+            <ul>
+              <li>Contributors are forgotten</li>
+              <li>Invisible work is missed</li>
+              <li>Recognition is delayed</li>
+            </ul>
+          </div>
+          <div class="section insight-block">
+            <h3>Opportunity</h3>
+            <p class="opportunity-copy">Use workflow signals and AI recommendations to surface contributors at the right moment.</p>
+          </div>
+          </div>
+          <div class="stage-group future-experience">
+          <div class="section">
+            <h3>Trigger</h3>
+            <ul>
+              <li>Project completed</li>
+              <li>Milestone reached</li>
+            </ul>
+          </div>
+          <div class="section no-divider">
+            <h3>User Actions</h3>
+            <ul>
+              <li>Review suggested contributors</li>
+              <li>Select recipients</li>
+              <li>Review suggested reasons</li>
+            </ul>
+          </div>
+          <div class="section no-divider">
+            <h3>System Actions</h3>
+            <ul>
+              <li>Detect collaborators</li>
+              <li>Generate recommendations</li>
+            </ul>
+          </div>
+          <div class="section no-divider">
+            <h3>Key Outputs</h3>
+            <ul>
+              <li>Candidate recipients</li>
+              <li>Suggested reasons</li>
+              <li>Recognition category</li>
+            </ul>
+          </div>
+          </div>
+        </article>
+
+        <article class="stage-column" style="--accent:#0f766e;--tint:#e6f5f3">
+          <div class="stage-header">
+            <div class="stage-kicker">
+              <span class="stage-number">2</span>
+              <span class="stage-type">Creation</span>
+            </div>
+            <h2 class="stage-title">Send Recognition</h2>
+            <p class="stage-subtitle">Express appreciation clearly and meaningfully.</p>
+          </div>
+          <div class="stage-group current-state">
+          <div class="section insight-block">
+            <h3>Current Challenges</h3>
+            <ul>
+              <li>Writing praise can feel awkward</li>
+              <li>Messages may sound generic</li>
+              <li>Category choice can be unclear</li>
+            </ul>
+          </div>
+          <div class="section insight-block">
+            <h3>Opportunity</h3>
+            <p class="opportunity-copy">Help users create specific, authentic recognition with editable AI-assisted drafts.</p>
+          </div>
+          </div>
+          <div class="stage-group future-experience">
+          <div class="section">
+            <h3>Trigger</h3>
+            <ul>
+              <li>Recipients selected</li>
+              <li>Recognition reason suggested</li>
+            </ul>
+          </div>
+          <div class="section no-divider">
+            <h3>User Actions</h3>
+            <ul>
+              <li>Review drafted message</li>
+              <li>Edit tone and details</li>
+              <li>Confirm category</li>
+              <li>Submit recognition</li>
+            </ul>
+          </div>
+          <div class="section no-divider">
+            <h3>System Actions</h3>
+            <ul>
+              <li>Draft recognition copy</li>
+              <li>Improve message specificity</li>
+              <li>Summarize impact</li>
+            </ul>
+          </div>
+          <div class="section no-divider">
+            <h3>Key Outputs</h3>
+            <ul>
+              <li>Recognition message</li>
+              <li>Contribution category</li>
+              <li>Impact summary</li>
+            </ul>
+          </div>
+          </div>
+        </article>
+
+        <article class="stage-column" style="--accent:#b45309;--tint:#fff3df">
+          <div class="stage-header">
+            <div class="stage-kicker">
+              <span class="stage-number">3</span>
+              <span class="stage-type">Celebration</span>
+            </div>
+            <h2 class="stage-title">Celebrate Recognition</h2>
+            <p class="stage-subtitle">Feel acknowledged and share the recognition moment with the team.</p>
+          </div>
+          <div class="stage-group current-state">
+          <div class="section insight-block">
+            <h3>Current Challenges</h3>
+            <ul>
+              <li>Recognition can get lost in notifications</li>
+              <li>Recipients may not know how to respond</li>
+              <li>Public celebration can feel performative</li>
+            </ul>
+          </div>
+          <div class="section insight-block">
+            <h3>Opportunity</h3>
+            <p class="opportunity-copy">Make recognition visible in the right team context with lightweight celebration actions.</p>
+          </div>
+          </div>
+          <div class="stage-group future-experience">
+          <div class="section">
+            <h3>Trigger</h3>
+            <ul>
+              <li>Recognition submitted</li>
+              <li>Notification delivered</li>
+            </ul>
+          </div>
+          <div class="section no-divider">
+            <h3>User Actions</h3>
+            <ul>
+              <li>Open notification</li>
+              <li>Read recognition</li>
+              <li>Reply or react</li>
+              <li>Participate in celebration</li>
+            </ul>
+          </div>
+          <div class="section no-divider">
+            <h3>System Actions</h3>
+            <ul>
+              <li>Render recognition card</li>
+              <li>Post to collaboration channel</li>
+              <li>Capture reactions and replies</li>
+            </ul>
+          </div>
+          <div class="section no-divider">
+            <h3>Key Outputs</h3>
+            <ul>
+              <li>Visible celebration</li>
+              <li>Recipient response</li>
+              <li>Team participation signal</li>
+            </ul>
+          </div>
+          </div>
+        </article>
+
+        <article class="stage-column" style="--accent:#be123c;--tint:#fff0f3">
+          <div class="stage-header">
+            <div class="stage-kicker">
+              <span class="stage-number">4</span>
+              <span class="stage-type">Memory</span>
+            </div>
+            <h2 class="stage-title">Build Career Visibility</h2>
+            <p class="stage-subtitle">Understand and demonstrate impact over time.</p>
+          </div>
+          <div class="stage-group current-state">
+          <div class="section insight-block">
+            <h3>Current Challenges</h3>
+            <ul>
+              <li>Recognition becomes hard to find later</li>
+              <li>Impact evidence is scattered</li>
+              <li>Managers may miss talent signals</li>
+            </ul>
+          </div>
+          <div class="section insight-block">
+            <h3>Opportunity</h3>
+            <p class="opportunity-copy">Turn recognition history into career evidence and lightweight talent insight.</p>
+          </div>
+          </div>
+          <div class="stage-group future-experience">
+          <div class="section">
+            <h3>Trigger</h3>
+            <ul>
+              <li>Recognition record created</li>
+              <li>Multiple recognition moments accumulate over time</li>
+            </ul>
+          </div>
+          <div class="section no-divider">
+            <h3>User Actions</h3>
+            <ul>
+              <li>Review recognition history</li>
+              <li>Explore strength themes</li>
+              <li>Select evidence for career discussion</li>
+              <li>Review team recognition patterns</li>
+            </ul>
+          </div>
+          <div class="section no-divider">
+            <h3>System Actions</h3>
+            <ul>
+              <li>Aggregate recognition records</li>
+              <li>Extract strength themes</li>
+              <li>Generate impact summaries</li>
+              <li>Surface talent signals</li>
+            </ul>
+          </div>
+          <div class="section no-divider">
+            <h3>Key Outputs</h3>
+            <ul>
+              <li>Impact summary</li>
+              <li>Strength profile</li>
+              <li>Career evidence</li>
+              <li>Talent signal</li>
+            </ul>
+          </div>
+          </div>
+        </article>
+      </section>
+      </div>
+
+      <div class="swimlane-layout">
+      <aside class="section-label-rail swimlane-label-rail" aria-hidden="true">
+        <div class="universal-label">Cross-platform Touchpoints</div>
+      </aside>
+      <section class="swimlane" aria-label="Cross-platform Touchpoints">
+        <div class="swimlane-row">
+          <div class="touchpoint-bar" style="--bar-color:#2563eb; --bar-gradient:linear-gradient(90deg, color-mix(in srgb, #2563eb 15%, #ffffff), color-mix(in srgb, #0f766e 13%, #ffffff)); grid-column:1 / span 2;">
+            <strong>Cowork</strong>
+            <span>Discover contributors · Start recognition</span>
+          </div>
+        </div>
+        <div class="swimlane-row">
+          <div class="touchpoint-bar" style="--bar-color:#2563eb; --bar-gradient:linear-gradient(90deg, color-mix(in srgb, #2563eb 15%, #ffffff), color-mix(in srgb, #0f766e 13%, #ffffff)); grid-column:1 / span 2;">
+            <strong>Outlook</strong>
+            <span>Recognition reminder · Send from email context</span>
+          </div>
+        </div>
+        <div class="swimlane-row">
+          <div class="touchpoint-bar" style="--bar-color:#0f766e; --bar-gradient:linear-gradient(90deg, color-mix(in srgb, #2563eb 14%, #ffffff), color-mix(in srgb, #0f766e 13%, #ffffff) 50%, color-mix(in srgb, #b45309 14%, #ffffff)); grid-column:1 / span 3;">
+            <strong>Teams App</strong>
+            <span>Notify employee / manager · Compose &amp; submit · Recognition feed</span>
+          </div>
+        </div>
+        <div class="swimlane-row">
+          <div class="touchpoint-bar" style="--bar-color:#b45309; grid-column:3 / span 1;">
+            <strong>Viva Engage</strong>
+            <span>Share recognition story</span>
+          </div>
+        </div>
+        <div class="swimlane-row">
+          <div class="touchpoint-bar" style="--bar-color:#b45309; grid-column:3 / span 1;">
+            <strong>LinkedIn</strong>
+            <span>Optional external sharing</span>
+          </div>
+        </div>
+        <div class="swimlane-row">
+          <div class="touchpoint-bar" style="--bar-color:#be123c; grid-column:4 / span 1;">
+            <strong>Connect</strong>
+            <span>Add recognition evidence</span>
+          </div>
+        </div>
+      </section>
+      </div>
+
+      <footer class="footer-note">
+        <span>Read left to right: discovery in Cowork, creation in Teams, celebration in collaboration channels, and recognition evidence in career surfaces.</span>
+        <span>Microsoft Fluent inspired enterprise journey artifact</span>
+      </footer>
+    </section>
+  </main>
+
+</body>
+</html>
