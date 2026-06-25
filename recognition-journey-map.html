@@ -446,6 +446,273 @@
         box-shadow: none;
       }
     }
+
+    /* --- Interactive touchpoint pills --- */
+    .tp-pill {
+      cursor: pointer;
+      transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+      user-select: none;
+    }
+
+    .tp-pill:hover,
+    .tp-pill:focus-visible {
+      transform: translateY(-1px);
+      box-shadow: 0 10px 22px rgba(31, 41, 55, .14);
+      border-color: color-mix(in srgb, var(--bar-color) 55%, #ffffff);
+      outline: none;
+    }
+
+    .tp-pill.is-active {
+      box-shadow: 0 0 0 2px color-mix(in srgb, var(--bar-color) 55%, #ffffff), 0 10px 22px rgba(31, 41, 55, .16);
+    }
+
+    .tp-cue {
+      margin-left: auto;
+      flex: none;
+      font-size: 11px;
+      font-weight: 750;
+      color: var(--bar-color);
+      opacity: .65;
+      white-space: nowrap;
+    }
+
+    .tp-pill:hover .tp-cue,
+    .tp-pill:focus-visible .tp-cue { opacity: 1; }
+
+    /* --- Full-screen prototype stage --- */
+    .prototype-stage {
+      width: 100%;
+      min-height: 100vh;
+      background: linear-gradient(180deg, #e9edf4, #f5f7fb);
+      border-top: 1px solid var(--line);
+    }
+
+    .proto-shell {
+      width: min(1880px, 100%);
+      margin: 0 auto;
+      padding: 24px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .proto-bar {
+      display: flex;
+      align-items: center;
+      gap: 14px 20px;
+      flex-wrap: wrap;
+      padding: 4px 2px 0;
+      background: transparent;
+      border: 0;
+      box-shadow: none;
+    }
+
+    .proto-id { display: flex; align-items: center; gap: 12px; }
+    .proto-id h2 { margin: 0; font-size: 20px; line-height: 1.2; }
+    .proto-in { color: var(--muted); font-size: 16px; font-weight: 500; margin-right: 12px; }
+
+    .proto-stage-tag {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      padding: 5px 12px;
+      font-size: 12px;
+      font-weight: 750;
+      color: var(--stage-tag-color, #2563eb);
+      background: color-mix(in srgb, var(--stage-tag-color, #2563eb) 12%, #ffffff);
+      border: 1px solid color-mix(in srgb, var(--stage-tag-color, #2563eb) 28%, #ffffff);
+    }
+
+    .proto-close {
+      margin-left: auto;
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--ink);
+      border-radius: 8px;
+      padding: 8px 14px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .proto-close:hover { background: #f1f4f9; }
+
+    .proto-body { flex: 1; margin-top: 18px; }
+    .proto-panel { display: none; animation: protoIn .25s ease; }
+    .proto-panel.is-active { display: block; }
+
+    @keyframes protoIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: none; }
+    }
+
+    /* --- Mock app frame + shared prototype components --- */
+    .pf {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .pf-chrome {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 11px 16px;
+      background: #f3f5f9;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .pf-chrome .dot { width: 11px; height: 11px; border-radius: 50%; }
+    .pf-chrome .dot.r { background: #ff5f57; }
+    .pf-chrome .dot.y { background: #febc2e; }
+    .pf-chrome .dot.g { background: #28c840; }
+    .pf-name { margin-left: 10px; font-size: 13px; font-weight: 700; color: var(--slate); }
+
+    .pf-canvas { padding: 20px; }
+    .pf-split { display: grid; gap: 18px; }
+    .pf-split.s75 { grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); }
+    .pf-split.s5050 { grid-template-columns: 1fr 1fr; }
+
+    @media (max-width: 1100px) {
+      .pf-split { grid-template-columns: 1fr; }
+    }
+
+    .pf-h {
+      margin: 0 0 12px;
+      font-size: 13px;
+      font-weight: 800;
+      color: #354153;
+      text-transform: uppercase;
+      letter-spacing: .02em;
+    }
+
+    .av {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      flex: none;
+      display: grid;
+      place-items: center;
+      color: #fff;
+      font-weight: 800;
+      font-size: 14px;
+      background: var(--c, #2563eb);
+    }
+
+    .av.sm { width: 32px; height: 32px; font-size: 12px; }
+    .av.lg { width: 64px; height: 64px; font-size: 22px; }
+
+    .pchip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border-radius: 999px;
+      padding: 4px 10px;
+      font-size: 11px;
+      font-weight: 750;
+      background: color-mix(in srgb, var(--proto-accent, #2563eb) 12%, #fff);
+      color: color-mix(in srgb, var(--proto-accent, #2563eb) 70%, #1f2937);
+      border: 1px solid color-mix(in srgb, var(--proto-accent, #2563eb) 25%, #fff);
+    }
+
+    .pbtn {
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--ink);
+      border-radius: 8px;
+      padding: 8px 14px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .pbtn:hover { background: #f1f4f9; }
+
+    .pbtn-primary {
+      border: 0;
+      color: #fff;
+      background: var(--proto-accent, #2563eb);
+      box-shadow: 0 6px 16px color-mix(in srgb, var(--proto-accent, #2563eb) 35%, transparent);
+    }
+
+    .pbtn-primary:hover { filter: brightness(1.05); background: var(--proto-accent, #2563eb); }
+
+    .pcard { border: 1px solid var(--line); border-radius: 10px; padding: 14px; background: #fff; }
+    .pcard + .pcard { margin-top: 12px; }
+
+    .muted { color: var(--muted); font-size: 13px; line-height: 1.5; }
+    .row { display: flex; align-items: center; gap: 12px; }
+    .row.top { align-items: flex-start; }
+    .grow { flex: 1; min-width: 0; }
+    .name { font-weight: 800; font-size: 14px; }
+    .sub { color: var(--muted); font-size: 12px; }
+
+    .banner-success {
+      background: color-mix(in srgb, #16a34a 10%, #fff);
+      border: 1px solid color-mix(in srgb, #16a34a 26%, #fff);
+      color: #15803d;
+      border-radius: 10px;
+      padding: 12px 14px;
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    .banner-tip {
+      background: color-mix(in srgb, var(--proto-accent, #2563eb) 10%, #fff);
+      border: 1px solid color-mix(in srgb, var(--proto-accent, #2563eb) 26%, #fff);
+      color: color-mix(in srgb, var(--proto-accent, #2563eb) 72%, #1f2937);
+      border-radius: 10px;
+      padding: 12px 14px;
+      font-size: 14px;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .ai-pane {
+      background: linear-gradient(180deg, color-mix(in srgb, var(--proto-accent, #2563eb) 7%, #fff), #fff);
+      border-radius: 12px;
+      padding: 16px;
+      border: 1px solid color-mix(in srgb, var(--proto-accent, #2563eb) 18%, #fff);
+    }
+
+    .textarea {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 12px 14px;
+      background: #fbfcfe;
+      font-size: 14px;
+      line-height: 1.55;
+      color: #2b3543;
+    }
+
+    .field {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 8px 12px;
+      background: #fbfcfe;
+      font-size: 13px;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .reactions { display: flex; gap: 8px; flex-wrap: wrap; }
+    .react { border: 1px solid var(--line); border-radius: 999px; padding: 5px 11px; font-size: 12px; font-weight: 700; background: #fff; }
+    .tagrow { display: flex; gap: 8px; flex-wrap: wrap; }
+    .tag { border-radius: 8px; padding: 6px 11px; font-size: 12px; font-weight: 750; background: #eef2f7; color: #475569; }
+    .toolbar { display: flex; gap: 8px; flex-wrap: wrap; }
+
+    .activity { display: flex; gap: 12px; padding: 10px 0; border-bottom: 1px dashed var(--line); }
+    .activity:last-child { border-bottom: 0; }
+    .ic { width: 30px; height: 30px; border-radius: 8px; display: grid; place-items: center; font-size: 14px; background: #eef2f7; flex: none; }
+
+    .app-rail { display: flex; flex-direction: column; gap: 14px; padding: 14px 0; background: #f3f5f9; border-right: 1px solid var(--line); align-items: center; }
+    .app-ic { width: 34px; height: 34px; border-radius: 9px; display: grid; place-items: center; color: #fff; font-weight: 800; font-size: 13px; }
+    .teams-shell { display: grid; grid-template-columns: 64px minmax(0, 1fr); }
   </style>
 </head>
 <body>
@@ -710,39 +977,45 @@
       </aside>
       <section class="swimlane" aria-label="Cross-platform Touchpoints">
         <div class="swimlane-row">
-          <div class="touchpoint-bar" style="--bar-color:#2563eb; --bar-gradient:linear-gradient(90deg, color-mix(in srgb, #2563eb 15%, #ffffff), color-mix(in srgb, #0f766e 13%, #ffffff)); grid-column:1 / span 2;">
+          <div class="touchpoint-bar tp-pill" data-tp="cowork" role="button" tabindex="0" style="--bar-color:#2563eb; --bar-gradient:linear-gradient(90deg, color-mix(in srgb, #2563eb 15%, #ffffff), color-mix(in srgb, #0f766e 13%, #ffffff)); grid-column:1 / span 2;">
             <strong>Cowork</strong>
             <span>Discover contributors · Start recognition</span>
+            <span class="tp-cue" aria-hidden="true">View prototype ↗</span>
           </div>
         </div>
         <div class="swimlane-row">
-          <div class="touchpoint-bar" style="--bar-color:#2563eb; --bar-gradient:linear-gradient(90deg, color-mix(in srgb, #2563eb 15%, #ffffff), color-mix(in srgb, #0f766e 13%, #ffffff)); grid-column:1 / span 2;">
+          <div class="touchpoint-bar tp-pill" data-tp="outlook" role="button" tabindex="0" style="--bar-color:#2563eb; --bar-gradient:linear-gradient(90deg, color-mix(in srgb, #2563eb 15%, #ffffff), color-mix(in srgb, #0f766e 13%, #ffffff)); grid-column:1 / span 2;">
             <strong>Outlook</strong>
             <span>Recognition reminder · Send from email context</span>
+            <span class="tp-cue" aria-hidden="true">View prototype ↗</span>
           </div>
         </div>
         <div class="swimlane-row">
-          <div class="touchpoint-bar" style="--bar-color:#0f766e; --bar-gradient:linear-gradient(90deg, color-mix(in srgb, #2563eb 14%, #ffffff), color-mix(in srgb, #0f766e 13%, #ffffff) 50%, color-mix(in srgb, #b45309 14%, #ffffff)); grid-column:1 / span 3;">
+          <div class="touchpoint-bar tp-pill" data-tp="teams" role="button" tabindex="0" style="--bar-color:#0f766e; --bar-gradient:linear-gradient(90deg, color-mix(in srgb, #2563eb 14%, #ffffff), color-mix(in srgb, #0f766e 13%, #ffffff) 50%, color-mix(in srgb, #b45309 14%, #ffffff)); grid-column:1 / span 3;">
             <strong>Teams App</strong>
             <span>Notify employee / manager · Compose &amp; submit · Recognition feed</span>
+            <span class="tp-cue" aria-hidden="true">View prototype ↗</span>
           </div>
         </div>
         <div class="swimlane-row">
-          <div class="touchpoint-bar" style="--bar-color:#b45309; grid-column:3 / span 1;">
+          <div class="touchpoint-bar tp-pill" data-tp="viva" role="button" tabindex="0" style="--bar-color:#b45309; grid-column:3 / span 1;">
             <strong>Viva Engage</strong>
             <span>Share recognition story</span>
+            <span class="tp-cue" aria-hidden="true">View ↗</span>
           </div>
         </div>
         <div class="swimlane-row">
-          <div class="touchpoint-bar" style="--bar-color:#b45309; grid-column:3 / span 1;">
+          <div class="touchpoint-bar tp-pill" data-tp="linkedin" role="button" tabindex="0" style="--bar-color:#b45309; grid-column:3 / span 1;">
             <strong>LinkedIn</strong>
             <span>Optional external sharing</span>
+            <span class="tp-cue" aria-hidden="true">View ↗</span>
           </div>
         </div>
         <div class="swimlane-row">
-          <div class="touchpoint-bar" style="--bar-color:#be123c; grid-column:4 / span 1;">
+          <div class="touchpoint-bar tp-pill" data-tp="connect" role="button" tabindex="0" style="--bar-color:#be123c; grid-column:4 / span 1;">
             <strong>Connect</strong>
             <span>Add recognition evidence</span>
+            <span class="tp-cue" aria-hidden="true">View ↗</span>
           </div>
         </div>
       </section>
@@ -754,6 +1027,207 @@
       </footer>
     </section>
   </main>
+
+  <section class="prototype-stage" id="prototypeStage" hidden aria-label="Touchpoint prototype">
+    <div class="proto-shell">
+      <header class="proto-bar">
+        <div class="proto-id">
+          <span id="protoSub" class="proto-stage-tag"></span>
+          <h2 class="proto-heading"><span class="proto-in">in</span><span id="protoTitle">Prototype</span></h2>
+        </div>
+        <button class="proto-close" id="protoClose" type="button">Close ✕</button>
+      </header>
+
+      <div class="proto-body" id="protoBody">
+
+        <!-- Cowork -->
+        <div class="proto-panel" data-panel="cowork">
+          <div class="pf">
+            <div class="pf-chrome"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="pf-name">Cowork — “Spring Launch” workspace</span></div>
+            <div class="pf-canvas pf-split s75">
+              <section>
+                <div class="banner-success">🎉 “Spring Launch” shipped · 6 collaborators detected</div>
+                <div class="pf-h" style="margin-top:18px">Recent project activity</div>
+                <div class="activity"><div class="ic">📝</div><div class="grow"><div class="name">Design handoff finalized</div><div class="sub">Maya Chen · 2 days ago</div></div></div>
+                <div class="activity"><div class="ic">🔀</div><div class="grow"><div class="name">14 pull requests reviewed</div><div class="sub">Diego Santos · last week</div></div></div>
+                <div class="activity"><div class="ic">📊</div><div class="grow"><div class="name">Launch metrics dashboard</div><div class="sub">Priya Nair · 3 days ago</div></div></div>
+                <div class="activity"><div class="ic">🤝</div><div class="grow"><div class="name">Unblocked partner-team integration</div><div class="sub">Sam Lee · last week</div></div></div>
+              </section>
+              <aside class="ai-pane">
+                <div class="pf-h" style="margin-bottom:4px">✨ Recognition suggestions</div>
+                <div class="muted" style="margin-bottom:14px">Surfaced from project signals</div>
+                <div class="pcard">
+                  <div class="row top"><div class="av" style="--c:#2563eb">MC</div><div class="grow"><div class="name">Maya Chen</div><div class="sub">Product Designer</div><div class="muted" style="margin-top:6px">Led the design handoff and unblocked engineering twice.</div><div class="row" style="margin-top:10px"><span class="pchip">Impact</span></div></div></div>
+                  <div class="row" style="margin-top:12px"><button class="pbtn pbtn-primary grow" type="button">Recognize</button><button class="pbtn" type="button">Dismiss</button></div>
+                </div>
+                <div class="pcard">
+                  <div class="row top"><div class="av" style="--c:#0f766e">DS</div><div class="grow"><div class="name">Diego Santos</div><div class="sub">Software Engineer</div><div class="muted" style="margin-top:6px">Reviewed 14 PRs and mentored two new joiners.</div><div class="row" style="margin-top:10px"><span class="pchip">Mentorship</span></div></div></div>
+                  <div class="row" style="margin-top:12px"><button class="pbtn pbtn-primary grow" type="button">Recognize</button><button class="pbtn" type="button">Dismiss</button></div>
+                </div>
+              </aside>
+            </div>
+          </div>
+        </div>
+
+        <!-- Outlook -->
+        <div class="proto-panel" data-panel="outlook">
+          <div class="pf">
+            <div class="pf-chrome"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="pf-name">Outlook — Inbox</span></div>
+            <div class="pf-canvas">
+              <div class="banner-tip">💡 <div class="grow">This thread wrapped up the <strong>Spring Launch</strong> project. Recognize a teammate who made it happen?</div><button class="pbtn pbtn-primary" type="button">Recognize</button></div>
+              <div class="pcard" style="margin-top:16px">
+                <div class="row top"><div class="av" style="--c:#2563eb">MC</div><div class="grow"><div class="row" style="justify-content:space-between"><div class="name">Maya Chen</div><div class="sub">Today, 9:42 AM</div></div><div class="sub">Re: Spring Launch — we’re live 🚀</div></div></div>
+                <div class="muted" style="margin-top:12px">Huge thanks to everyone. The handoff and final QA came together fast — really proud of how the team rallied this week.</div>
+              </div>
+              <div class="pcard" style="margin-top:16px; border-color: color-mix(in srgb, var(--proto-accent) 30%, #fff)">
+                <div class="pf-h">Quick recognition</div>
+                <div class="field">To <strong style="color:var(--ink)">Maya Chen</strong></div>
+                <div class="row" style="margin:10px 0"><span class="pchip">Impact</span><span class="tag">Teamwork</span><span class="tag">Craft</span></div>
+                <div class="textarea">Maya, your design handoff kept the whole launch on track — thank you for unblocking engineering twice this week.</div>
+                <div class="row" style="margin-top:12px; justify-content:flex-end"><button class="pbtn" type="button">✨ Improve draft</button><button class="pbtn pbtn-primary" type="button">Send recognition</button></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Teams App -->
+        <div class="proto-panel" data-panel="teams">
+          <div class="pf">
+            <div class="pf-chrome"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="pf-name">Microsoft Teams — Recognition</span></div>
+            <div class="teams-shell">
+              <div class="app-rail">
+                <div class="app-ic" style="background:#6264a7">T</div>
+                <div class="app-ic" style="background:#7b83eb">💬</div>
+                <div class="app-ic" style="background:#0f766e">🏆</div>
+                <div class="app-ic" style="background:#b45309">📅</div>
+              </div>
+              <div class="pf-canvas pf-split s5050">
+                <section>
+                  <div class="pf-h">New recognition</div>
+                  <div class="field">To <strong style="color:var(--ink)">Maya Chen</strong> · Product Designer</div>
+                  <div class="pf-h" style="margin:16px 0 8px">Category</div>
+                  <div class="row" style="flex-wrap:wrap"><span class="pchip">Impact</span><span class="tag">Teamwork</span><span class="tag">Innovation</span><span class="tag">Leadership</span></div>
+                  <div class="pf-h" style="margin:16px 0 8px">Message <span style="color:var(--proto-accent)">✨ AI draft</span></div>
+                  <div class="textarea">Maya, your design handoff on Spring Launch kept us on schedule and you unblocked engineering twice. Thank you for raising the bar on craft and collaboration.</div>
+                  <div class="toolbar" style="margin-top:12px"><button class="pbtn" type="button">✨ Improve</button><button class="pbtn" type="button">Summarize impact</button><button class="pbtn" type="button">Adjust tone</button></div>
+                  <div class="row" style="margin-top:16px; justify-content:flex-end"><button class="pbtn" type="button">Save draft</button><button class="pbtn pbtn-primary" type="button">Submit recognition</button></div>
+                </section>
+                <aside>
+                  <div class="pf-h">Recognition feed</div>
+                  <div class="pcard"><div class="row top"><div class="av sm" style="--c:#0f766e">DS</div><div class="grow"><div class="name">Diego → Priya</div><div class="muted" style="margin-top:4px">“Saved the launch dashboard at the last minute.”</div><div class="reactions" style="margin-top:10px"><span class="react">👏 18</span><span class="react">🎉 9</span></div></div></div></div>
+                  <div class="pcard"><div class="row top"><div class="av sm" style="--c:#b45309">SL</div><div class="grow"><div class="name">Sam → Maya</div><div class="muted" style="margin-top:4px">“Thanks for the clean handoff — made my week.”</div><div class="reactions" style="margin-top:10px"><span class="react">❤️ 24</span><span class="react">👏 12</span></div></div></div></div>
+                </aside>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Viva Engage -->
+        <div class="proto-panel" data-panel="viva">
+          <div class="pf">
+            <div class="pf-chrome"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="pf-name">Viva Engage — Recognition community</span></div>
+            <div class="pf-canvas" style="max-width:720px; margin:0 auto">
+              <div class="pcard">
+                <div class="row top"><div class="av" style="--c:#b45309">SL</div><div class="grow"><div class="name">Sam Lee <span class="sub">recognized</span> Maya Chen</div><div class="sub">Spring Launch team · 2h</div></div><span class="pchip">Impact</span></div>
+                <div style="margin:14px 0; padding:18px; border-radius:12px; background:linear-gradient(135deg, color-mix(in srgb,#b45309 12%,#fff), #fff); border:1px solid color-mix(in srgb,#b45309 22%,#fff)">
+                  <div style="font-size:15px; line-height:1.55; color:#3a2a14">🏆 Maya’s design handoff kept the entire Spring Launch on track — and she unblocked engineering twice without being asked. This is what great craft + teamwork looks like.</div>
+                </div>
+                <div class="reactions"><span class="react">👏 36</span><span class="react">❤️ 21</span><span class="react">🎉 14</span><span class="react">💡 6</span></div>
+                <div class="pcard" style="margin-top:14px; background:#fafbfd"><div class="row top"><div class="av sm" style="--c:#475569">PN</div><div class="grow"><div class="name" style="font-size:13px">Priya Nair</div><div class="muted">So well deserved 🙌 congrats Maya!</div></div></div></div>
+                <div class="field" style="margin-top:12px">Add a comment…</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- LinkedIn -->
+        <div class="proto-panel" data-panel="linkedin">
+          <div class="pf">
+            <div class="pf-chrome"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="pf-name">LinkedIn — Share recognition (optional)</span></div>
+            <div class="pf-canvas" style="max-width:680px; margin:0 auto">
+              <div class="pcard">
+                <div class="row top"><div class="av" style="--c:#0a66c2">SL</div><div class="grow"><div class="name">Sam Lee</div><div class="sub">Engineering Manager · Post to Anyone 🌐</div></div></div>
+                <div class="textarea" style="margin-top:14px">Proud to recognize Maya Chen 👏 Her design leadership made our Spring Launch possible. Grateful to work alongside such a thoughtful, generous teammate. #recognition #teamwork</div>
+                <div class="pcard" style="margin-top:14px; background:#f3f6fb"><div class="row"><div class="av sm" style="--c:#0a66c2">MC</div><div class="grow"><div class="name" style="font-size:13px">Maya Chen — Impact award</div><div class="sub">Shared from your company recognition program</div></div><span style="font-size:20px">🏆</span></div></div>
+                <div class="row" style="margin-top:14px; justify-content:space-between"><span class="muted">Sharing externally is always optional</span><button class="pbtn pbtn-primary" type="button">Post</button></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Connect -->
+        <div class="proto-panel" data-panel="connect">
+          <div class="pf">
+            <div class="pf-chrome"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="pf-name">Connect — Career profile</span></div>
+            <div class="pf-canvas">
+              <div class="row top"><div class="av lg" style="--c:#be123c">MC</div><div class="grow"><div class="name" style="font-size:20px">Maya Chen</div><div class="sub">Product Designer · Design Systems</div><div class="row" style="margin-top:10px"><span class="pchip">12 recognitions</span><span class="tag">↑ 4 this quarter</span></div></div><button class="pbtn pbtn-primary" type="button">Add to performance review</button></div>
+              <div class="pf-split s75" style="margin-top:20px">
+                <section>
+                  <div class="pf-h">Recognition evidence</div>
+                  <div class="pcard"><div class="row top"><div class="av sm" style="--c:#0f766e">SL</div><div class="grow"><div class="name" style="font-size:13px">Impact · Spring Launch</div><div class="muted">“Design handoff kept the entire launch on track.”</div><div class="sub" style="margin-top:6px">From Sam Lee · this quarter</div></div></div></div>
+                  <div class="pcard"><div class="row top"><div class="av sm" style="--c:#2563eb">DS</div><div class="grow"><div class="name" style="font-size:13px">Craft · Design System v2</div><div class="muted">“Raised the quality bar for the whole team.”</div><div class="sub" style="margin-top:6px">From Diego Santos · last quarter</div></div></div></div>
+                </section>
+                <aside class="ai-pane">
+                  <div class="pf-h">Strength profile</div>
+                  <div class="tagrow"><span class="tag">Craft</span><span class="tag">Collaboration</span><span class="tag">Leadership</span><span class="tag">Reliability</span></div>
+                  <div class="pf-h" style="margin-top:16px">Impact summary</div>
+                  <div class="muted">Consistently recognized for unblocking teams and elevating design quality across launches — a reliable cross-functional partner.</div>
+                </aside>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <script>
+    (function () {
+      const stage = document.getElementById('prototypeStage');
+      const titleEl = document.getElementById('protoTitle');
+      const subEl = document.getElementById('protoSub');
+      const body = document.getElementById('protoBody');
+      const meta = {
+        cowork: { name: 'Cowork', stage: 'Discover Contributions', stageColor: '#2563eb', color: '#2563eb' },
+        outlook: { name: 'Outlook', stage: 'Send Recognition', stageColor: '#0f766e', color: '#2563eb' },
+        teams: { name: 'Teams App', stage: 'Send Recognition', stageColor: '#0f766e', color: '#0f766e' },
+        viva: { name: 'Viva Engage', stage: 'Celebrate Recognition', stageColor: '#b45309', color: '#b45309' },
+        linkedin: { name: 'LinkedIn', stage: 'Celebrate Recognition', stageColor: '#b45309', color: '#0a66c2' },
+        connect: { name: 'Connect', stage: 'Build Career Visibility', stageColor: '#be123c', color: '#be123c' }
+      };
+      const pills = document.querySelectorAll('.tp-pill');
+      const panels = body.querySelectorAll('.proto-panel');
+
+      function show(tp) {
+        const m = meta[tp];
+        if (!m) return;
+        stage.hidden = false;
+        stage.style.setProperty('--proto-accent', m.color);
+        titleEl.textContent = m.name;
+        subEl.textContent = m.stage;
+        subEl.style.setProperty('--stage-tag-color', m.stageColor);
+        panels.forEach(p => p.classList.toggle('is-active', p.dataset.panel === tp));
+        pills.forEach(p => p.classList.toggle('is-active', p.dataset.tp === tp));
+        stage.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+
+      function close() {
+        stage.hidden = true;
+        pills.forEach(p => p.classList.remove('is-active'));
+        document.querySelector('.map-canvas').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+
+      pills.forEach(p => {
+        p.addEventListener('click', () => show(p.dataset.tp));
+        p.addEventListener('keydown', e => {
+          if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); show(p.dataset.tp); }
+        });
+      });
+      document.getElementById('protoClose').addEventListener('click', close);
+      document.addEventListener('keydown', e => { if (e.key === 'Escape' && !stage.hidden) close(); });
+    })();
+  </script>
 
 </body>
 </html>
