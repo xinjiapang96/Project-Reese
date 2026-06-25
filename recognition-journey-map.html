@@ -20,8 +20,8 @@
       --rose: #be123c;
       --slate: #475569;
       --stage-header-row: 160px;
-      --current-state-row: 238px;
-      --future-experience-row: 500px;
+      --current-state-row: 280px;
+      --future-experience-row: 660px;
     }
 
     * {
@@ -50,7 +50,7 @@
     }
 
     .map-canvas {
-      min-width: 1460px;
+      min-width: 1720px;
       background: rgba(255, 255, 255, 0.76);
       border: 1px solid rgba(215, 221, 232, 0.95);
       border-radius: 8px;
@@ -121,7 +121,7 @@
 
     .journey-grid {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(5, 1fr);
       gap: 18px;
       align-items: stretch;
     }
@@ -206,7 +206,7 @@
     }
 
     .stage-number {
-      width: 34px;
+      min-width: 34px;
       height: 34px;
       border-radius: 7px;
       display: grid;
@@ -216,6 +216,7 @@
       font-weight: 800;
       font-size: 15px;
       border: 1px solid color-mix(in srgb, var(--accent) 18%, #ffffff);
+      padding: 0 10px;
     }
 
     .stage-type {
@@ -265,7 +266,7 @@
 
     .future-experience {
       display: grid;
-      grid-template-rows: 72px 124px 104px 90px;
+      grid-template-rows: 96px 170px 190px 130px;
       row-gap: 10px;
     }
 
@@ -376,7 +377,7 @@
 
     .swimlane-row {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(5, 1fr);
       gap: 18px;
       align-items: center;
     }
@@ -713,6 +714,13 @@
     .app-rail { display: flex; flex-direction: column; gap: 14px; padding: 14px 0; background: #f3f5f9; border-right: 1px solid var(--line); align-items: center; }
     .app-ic { width: 34px; height: 34px; border-radius: 9px; display: grid; place-items: center; color: #fff; font-weight: 800; font-size: 13px; }
     .teams-shell { display: grid; grid-template-columns: 64px minmax(0, 1fr); }
+
+    /* optional touchpoint bar */
+    .optional-bar {
+      border: 1.5px dashed color-mix(in srgb, var(--bar-color) 45%, #ffffff) !important;
+      background: linear-gradient(90deg, color-mix(in srgb, var(--bar-color) 10%, #ffffff), color-mix(in srgb, var(--bar-color) 5%, #ffffff));
+    }
+
   </style>
 </head>
 <body>
@@ -908,6 +916,68 @@
           </div>
         </article>
 
+        <article class="stage-column" style="--accent:#94a3b8;--tint:#f1f5f9" aria-label="Optional stage: Reward Redemption">
+          <div class="stage-header">
+            <div class="stage-kicker">
+              <span class="stage-number">Optional</span>
+            </div>
+            <h2 class="stage-title">Redeem Points</h2>
+            <p class="stage-subtitle">Understand available points and redeem them for meaningful rewards.</p>
+          </div>
+          <div class="stage-group current-state">
+          <div class="section insight-block">
+            <h3>Current Challenges</h3>
+            <ul>
+              <li>Users may not realize recognition points can be redeemed</li>
+              <li>Points and recognition can feel disconnected</li>
+              <li>Redemption is transactional and may distract from the moment</li>
+            </ul>
+          </div>
+          <div class="section insight-block">
+            <h3>Opportunity</h3>
+            <p class="opportunity-copy">Use Microsoft surfaces to make point redemption discoverable, while keeping marketplace browsing and fulfillment in Workhuman.</p>
+          </div>
+          </div>
+          <div class="stage-group future-experience">
+          <div class="section">
+            <h3>Trigger</h3>
+            <ul>
+              <li>Recognition with points received</li>
+              <li>Points balance updated</li>
+              <li>Reminder to redeem unused points</li>
+            </ul>
+          </div>
+          <div class="section no-divider">
+            <h3>User Actions</h3>
+            <ul>
+              <li>View points balance</li>
+              <li>Open Workhuman Marketplace</li>
+              <li>Browse available rewards</li>
+              <li>Select a reward</li>
+              <li>Complete redemption in Workhuman</li>
+            </ul>
+          </div>
+          <div class="section no-divider">
+            <h3>System Actions</h3>
+            <ul>
+              <li>Show points received in the recognition notification</li>
+              <li>Provide deep link to Workhuman Marketplace</li>
+              <li>Sync recognition and points balance where available</li>
+              <li>Keep reward fulfillment in Workhuman</li>
+            </ul>
+          </div>
+          <div class="section no-divider">
+            <h3>Key Outputs</h3>
+            <ul>
+              <li>Points balance awareness</li>
+              <li>Workhuman marketplace visit</li>
+              <li>Reward redemption</li>
+              <li>Fulfillment status</li>
+            </ul>
+          </div>
+          </div>
+        </article>
+
         <article class="stage-column" style="--accent:#be123c;--tint:#fff0f3">
           <div class="stage-header">
             <div class="stage-kicker">
@@ -1012,7 +1082,11 @@
           </div>
         </div>
         <div class="swimlane-row">
-          <div class="touchpoint-bar tp-pill" data-tp="connect" role="button" tabindex="0" style="--bar-color:#be123c; grid-column:4 / span 1;">
+          <div class="touchpoint-bar optional-bar" style="--bar-color:#94a3b8; grid-column:3 / span 2;">
+            <strong>Workhuman</strong>
+            <span>Browse &amp; redeem rewards</span>
+          </div>
+          <div class="touchpoint-bar tp-pill" data-tp="connect" role="button" tabindex="0" style="--bar-color:#be123c; grid-column:5 / span 1;">
             <strong>Connect</strong>
             <span>Add recognition evidence</span>
             <span class="tp-cue" aria-hidden="true">View ↗</span>
