@@ -19,9 +19,6 @@
       --amber: #b45309;
       --rose: #be123c;
       --slate: #475569;
-      --stage-header-row: 160px;
-      --current-state-row: 280px;
-      --future-experience-row: 660px;
     }
 
     * {
@@ -122,7 +119,11 @@
     .journey-grid {
       display: grid;
       grid-template-columns: repeat(5, 1fr);
-      gap: 18px;
+      grid-template-rows: auto auto auto;
+      grid-template-rows: subgrid;
+      grid-row: 1 / span 3;
+      column-gap: 18px;
+      row-gap: 14px;
       align-items: stretch;
     }
 
@@ -130,14 +131,17 @@
     .swimlane-layout {
       display: grid;
       grid-template-columns: 132px minmax(0, 1fr);
-      gap: 18px;
-      align-items: start;
+      grid-template-rows: repeat(3, auto);
+      column-gap: 18px;
+      row-gap: 14px;
+      align-items: stretch;
     }
 
     .section-label-rail {
       display: grid;
-      grid-template-rows: var(--stage-header-row) var(--current-state-row) var(--future-experience-row);
-      row-gap: 14px;
+      grid-template-rows: auto auto auto;
+      grid-template-rows: subgrid;
+      grid-row: 1 / span 3;
       min-height: auto;
     }
 
@@ -178,7 +182,9 @@
       min-height: auto;
       padding: 0 16px 16px;
       display: grid;
-      grid-template-rows: var(--stage-header-row) var(--current-state-row) var(--future-experience-row);
+      grid-row: 1 / span 3;
+      grid-template-rows: auto auto auto;
+      grid-template-rows: subgrid;
       row-gap: 14px;
       align-items: stretch;
       box-shadow: none;
@@ -189,7 +195,7 @@
       margin: 0;
       padding: 17px 16px 18px;
       min-height: 0;
-      height: 100%;
+      height: auto;
       background:
         linear-gradient(180deg, color-mix(in srgb, var(--accent) 13%, #ffffff), var(--tint));
       border-top: 5px solid var(--accent);
@@ -265,9 +271,9 @@
     }
 
     .future-experience {
-      display: grid;
-      grid-template-rows: 96px 170px 190px 130px;
-      row-gap: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
     }
 
     .goal {
@@ -366,6 +372,8 @@
     .swimlane-layout {
       margin-top: 22px;
       align-items: stretch;
+      grid-template-rows: auto;
+      row-gap: 0;
     }
 
     .swimlane-label-rail {
@@ -748,20 +756,20 @@
               <span class="stage-type">Discovery</span>
             </div>
             <h2 class="stage-title">Discover Contributions</h2>
-            <p class="stage-subtitle">Identify contributors worth recognizing.</p>
+            <p class="stage-subtitle">Help employees identify meaningful contributors while the work is still fresh.</p>
           </div>
           <div class="stage-group current-state">
           <div class="section insight-block">
             <h3>Current Challenges</h3>
             <ul>
-              <li>Contributors are forgotten</li>
-              <li>Invisible work is missed</li>
-              <li>Recognition is delayed</li>
+              <li>Contributors are forgotten over time.</li>
+              <li>Behind-the-scenes work often goes unnoticed.</li>
+              <li>Recognition is often delayed—or never sent.</li>
             </ul>
           </div>
           <div class="section insight-block">
             <h3>Opportunity</h3>
-            <p class="opportunity-copy">Use workflow signals and AI recommendations to surface contributors at the right moment.</p>
+            <p class="opportunity-copy">Surface recognition opportunities directly within employees' daily workflow using workflow context and AI recommendations.</p>
           </div>
           </div>
           <div class="stage-group future-experience">
@@ -769,30 +777,41 @@
             <h3>Trigger</h3>
             <ul>
               <li>Project completed</li>
+              <li>Meeting ended</li>
               <li>Milestone reached</li>
+              <li>Task completed</li>
+              <li>Cross-team collaboration finished</li>
+              <li>Service anniversary</li>
+              <li>Mentorship completed</li>
             </ul>
           </div>
           <div class="section no-divider">
             <h3>User Actions</h3>
             <ul>
               <li>Review suggested contributors</li>
-              <li>Select recipients</li>
-              <li>Review suggested reasons</li>
+              <li>Validate AI recommendations</li>
+              <li>Select recipient(s)</li>
+              <li>Review suggested recognition reasons</li>
+              <li>Continue to Create Recognition</li>
             </ul>
           </div>
           <div class="section no-divider">
             <h3>System Actions</h3>
             <ul>
               <li>Detect collaborators</li>
-              <li>Generate recommendations</li>
+              <li>Analyze work relationships</li>
+              <li>Recommend recipients</li>
+              <li>Generate recognition reasons</li>
+              <li>Suggest recognition categories</li>
             </ul>
           </div>
           <div class="section no-divider">
             <h3>Key Outputs</h3>
             <ul>
               <li>Candidate recipients</li>
-              <li>Suggested reasons</li>
-              <li>Recognition category</li>
+              <li>Suggested recognition reasons</li>
+              <li>Suggested recognition category</li>
+              <li>Pre-filled recognition draft</li>
             </ul>
           </div>
           </div>
@@ -804,36 +823,38 @@
               <span class="stage-number">2</span>
               <span class="stage-type">Creation</span>
             </div>
-            <h2 class="stage-title">Send Recognition</h2>
-            <p class="stage-subtitle">Express appreciation clearly and meaningfully.</p>
+            <h2 class="stage-title">Create Recognition</h2>
+            <p class="stage-subtitle">Help employees recognize others quickly without interrupting their workflow.</p>
           </div>
           <div class="stage-group current-state">
           <div class="section insight-block">
             <h3>Current Challenges</h3>
             <ul>
-              <li>Writing praise can feel awkward</li>
-              <li>Messages may sound generic</li>
-              <li>Category choice can be unclear</li>
+              <li>Employees hesitate to send recognition.</li>
+              <li>Writing meaningful recognition takes effort.</li>
+              <li>Recognition is often postponed or abandoned.</li>
             </ul>
           </div>
           <div class="section insight-block">
             <h3>Opportunity</h3>
-            <p class="opportunity-copy">Help users create specific, authentic recognition with editable AI-assisted drafts.</p>
+            <p class="opportunity-copy">Reduce the effort of sending recognition using workflow context, AI-assisted drafting, and pre-filled information.</p>
           </div>
           </div>
           <div class="stage-group future-experience">
           <div class="section">
             <h3>Trigger</h3>
             <ul>
-              <li>Recipients selected</li>
-              <li>Recognition reason suggested</li>
+              <li>Recognition opportunity accepted</li>
+              <li>Recognition flow launched</li>
+              <li>Recipient(s) confirmed</li>
             </ul>
           </div>
           <div class="section no-divider">
             <h3>User Actions</h3>
             <ul>
               <li>Review drafted message</li>
-              <li>Edit tone and details</li>
+              <li>Personalize recognition</li>
+              <li>Choose visibility</li>
               <li>Confirm category</li>
               <li>Submit recognition</li>
             </ul>
@@ -841,17 +862,21 @@
           <div class="section no-divider">
             <h3>System Actions</h3>
             <ul>
-              <li>Draft recognition copy</li>
-              <li>Improve message specificity</li>
-              <li>Summarize impact</li>
+              <li>Pre-fill recipient information</li>
+              <li>Generate recognition draft</li>
+              <li>Recommend categories</li>
+              <li>Suggest visibility options</li>
+              <li>Capture recognition metadata</li>
             </ul>
           </div>
           <div class="section no-divider">
             <h3>Key Outputs</h3>
             <ul>
+              <li>Recognition submitted</li>
               <li>Recognition message</li>
-              <li>Contribution category</li>
-              <li>Impact summary</li>
+              <li>Recognition metadata</li>
+              <li>Visibility settings</li>
+              <li>Points (if applicable)</li>
             </ul>
           </div>
           </div>
@@ -1048,7 +1073,7 @@
       <section class="swimlane" aria-label="Cross-platform Touchpoints">
         <div class="swimlane-row">
           <div class="touchpoint-bar tp-pill" data-tp="cowork" role="button" tabindex="0" style="--bar-color:#2563eb; --bar-gradient:linear-gradient(90deg, color-mix(in srgb, #2563eb 15%, #ffffff), color-mix(in srgb, #0f766e 13%, #ffffff)); grid-column:1 / span 2;">
-            <strong>Cowork</strong>
+            <strong>Copilot/Cowork</strong>
             <span>Discover contributors · Start recognition</span>
             <span class="tp-cue" aria-hidden="true">View prototype ↗</span>
           </div>
@@ -1264,8 +1289,8 @@
       const body = document.getElementById('protoBody');
       const meta = {
         cowork: { name: 'Cowork', stage: 'Discover Contributions', stageColor: '#2563eb', color: '#2563eb' },
-        outlook: { name: 'Outlook', stage: 'Send Recognition', stageColor: '#0f766e', color: '#2563eb' },
-        teams: { name: 'Teams App', stage: 'Send Recognition', stageColor: '#0f766e', color: '#0f766e' },
+        outlook: { name: 'Outlook', stage: 'Create Recognition', stageColor: '#0f766e', color: '#2563eb' },
+        teams: { name: 'Teams App', stage: 'Create Recognition', stageColor: '#0f766e', color: '#0f766e' },
         viva: { name: 'Viva Engage', stage: 'Celebrate Recognition', stageColor: '#b45309', color: '#b45309' },
         linkedin: { name: 'LinkedIn', stage: 'Celebrate Recognition', stageColor: '#b45309', color: '#0a66c2' },
         connect: { name: 'Connect', stage: 'Build Career Visibility', stageColor: '#be123c', color: '#be123c' }
