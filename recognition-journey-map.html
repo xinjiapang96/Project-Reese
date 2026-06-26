@@ -729,6 +729,9 @@
       background: linear-gradient(90deg, color-mix(in srgb, var(--bar-color) 10%, #ffffff), color-mix(in srgb, var(--bar-color) 5%, #ffffff));
     }
 
+    /* ===== Cowork panel hosts the standalone Copilot recognition prototype ===== */
+    .cp-frame { width: 100%; height: 724px; border: 0; border-radius: 12px; display: block; background: #fff; box-shadow: 0 10px 30px rgba(31, 41, 55, 0.08); }
+
   </style>
 </head>
 <body>
@@ -1141,31 +1144,7 @@
 
         <!-- Cowork -->
         <div class="proto-panel" data-panel="cowork">
-          <div class="pf">
-            <div class="pf-chrome"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="pf-name">Cowork — “Spring Launch” workspace</span></div>
-            <div class="pf-canvas pf-split s75">
-              <section>
-                <div class="banner-success">🎉 “Spring Launch” shipped · 6 collaborators detected</div>
-                <div class="pf-h" style="margin-top:18px">Recent project activity</div>
-                <div class="activity"><div class="ic">📝</div><div class="grow"><div class="name">Design handoff finalized</div><div class="sub">Maya Chen · 2 days ago</div></div></div>
-                <div class="activity"><div class="ic">🔀</div><div class="grow"><div class="name">14 pull requests reviewed</div><div class="sub">Diego Santos · last week</div></div></div>
-                <div class="activity"><div class="ic">📊</div><div class="grow"><div class="name">Launch metrics dashboard</div><div class="sub">Priya Nair · 3 days ago</div></div></div>
-                <div class="activity"><div class="ic">🤝</div><div class="grow"><div class="name">Unblocked partner-team integration</div><div class="sub">Sam Lee · last week</div></div></div>
-              </section>
-              <aside class="ai-pane">
-                <div class="pf-h" style="margin-bottom:4px">✨ Recognition suggestions</div>
-                <div class="muted" style="margin-bottom:14px">Surfaced from project signals</div>
-                <div class="pcard">
-                  <div class="row top"><div class="av" style="--c:#2563eb">MC</div><div class="grow"><div class="name">Maya Chen</div><div class="sub">Product Designer</div><div class="muted" style="margin-top:6px">Led the design handoff and unblocked engineering twice.</div><div class="row" style="margin-top:10px"><span class="pchip">Impact</span></div></div></div>
-                  <div class="row" style="margin-top:12px"><button class="pbtn pbtn-primary grow" type="button">Recognize</button><button class="pbtn" type="button">Dismiss</button></div>
-                </div>
-                <div class="pcard">
-                  <div class="row top"><div class="av" style="--c:#0f766e">DS</div><div class="grow"><div class="name">Diego Santos</div><div class="sub">Software Engineer</div><div class="muted" style="margin-top:6px">Reviewed 14 PRs and mentored two new joiners.</div><div class="row" style="margin-top:10px"><span class="pchip">Mentorship</span></div></div></div>
-                  <div class="row" style="margin-top:12px"><button class="pbtn pbtn-primary grow" type="button">Recognize</button><button class="pbtn" type="button">Dismiss</button></div>
-                </div>
-              </aside>
-            </div>
-          </div>
+          <iframe id="cpFrame" class="cp-frame" data-src="copilot-recognition-prototype.html" title="Microsoft 365 Copilot — Recognition workflow"></iframe>
         </div>
 
         <!-- Outlook -->
@@ -1325,6 +1304,17 @@
       });
       document.getElementById('protoClose').addEventListener('click', close);
       document.addEventListener('keydown', e => { if (e.key === 'Escape' && !stage.hidden) close(); });
+    })();
+  </script>
+
+  <script>
+    // Lazy-load the standalone Copilot recognition prototype into the Cowork panel
+    (function () {
+      const frame = document.getElementById('cpFrame');
+      const pill = document.querySelector('.tp-pill[data-tp="cowork"]');
+      if (!frame || !pill) return;
+      // (Re)load a fresh copy each time the Cowork touchpoint is opened
+      pill.addEventListener('click', () => { frame.src = frame.dataset.src; });
     })();
   </script>
 

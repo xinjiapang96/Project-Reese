@@ -1,0 +1,988 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Microsoft 365 Copilot — Recognition workflow</title>
+  <style>
+    * { box-sizing: border-box; }
+    html, body { margin: 0; }
+    body {
+      font-family: "Segoe UI", Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+      background: #ffffff;
+      color: #242424;
+    }
+    button { font: inherit; }
+    .grow { flex: 1; min-width: 0; }
+
+    @keyframes protoIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: none; }
+    }
+
+    /* ===== Microsoft 365 Copilot recognition workflow ===== */
+    .cp-app {
+      --cp-fg: #242424;
+      --cp-fg2: #616161;
+      --cp-line: #e6e6e6;
+      --cp-hover: #f5f5f5;
+      --cp-sel: #ededed;
+      --cp-brand: #0f6cbd;
+      --cp-brand-press: #0c5aa6;
+      display: grid;
+      grid-template-columns: 290px minmax(0, 1fr);
+      height: 720px;
+      background: #fff;
+      color: var(--cp-fg);
+      border: 1px solid var(--cp-line);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(31, 41, 55, 0.08);
+    }
+
+    .cp-app .cp-i { width: 18px; height: 18px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+
+    .cp-rail { border-right: 1px solid var(--cp-line); background: #fbfbfb; padding: 14px 12px; display: flex; flex-direction: column; gap: 12px; overflow: hidden; }
+    .cp-rail-top { display: flex; align-items: center; justify-content: space-between; padding: 2px 6px; color: var(--cp-fg2); }
+    .cp-logo { width: 24px; height: 24px; border-radius: 7px; background: conic-gradient(from 210deg at 50% 50%, #2aa5f3, #6c4cf1, #d24fd6, #2aa5f3); }
+    .cp-apps { display: inline-flex; color: #616161; }
+
+    .cp-seg { display: flex; gap: 3px; background: #efefef; border-radius: 8px; padding: 3px; }
+    .cp-seg-btn { flex: 1; border: 0; background: transparent; border-radius: 6px; padding: 6px 10px; font-size: 13px; font-weight: 600; color: var(--cp-fg2); cursor: pointer; }
+    .cp-seg-btn.is-on { background: #fff; color: var(--cp-fg); box-shadow: 0 1px 2px rgba(0, 0, 0, .14); }
+
+    .cp-nav { display: flex; flex-direction: column; gap: 2px; }
+    .cp-nav-item { display: flex; align-items: center; gap: 11px; width: 100%; text-align: left; border: 0; background: transparent; border-radius: 8px; padding: 8px 10px; font-size: 14px; color: var(--cp-fg); cursor: pointer; }
+    .cp-nav-item:hover { background: var(--cp-hover); }
+    .cp-nav-item.is-active { background: var(--cp-sel); font-weight: 600; }
+    .cowork-only { display: none; }
+    .cp-app[data-mode-state="cowork"] .chat-only { display: none; }
+    .cp-app[data-mode-state="cowork"] .cowork-only { display: flex; }
+    .cp-cowork-nav { flex-direction: column; gap: 8px; }
+    .cp-cowork-task-name { margin-top: 18px; padding: 8px 10px; color: #4b5563; font-size: 13px; line-height: 1.35; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; border-radius: 8px; border: 0; background: transparent; text-align: left; cursor: pointer; }
+    .cp-cowork-task-name:hover { background: var(--cp-hover); }
+    .cp-cowork-task-name.is-active { background: var(--cp-sel); color: var(--cp-fg); font-weight: 600; }
+    .cp-app:not([data-cowork-recognition="1"]) .cp-cowork-task-name { display: none; }
+    .cp-app[data-sent="1"] .cp-cowork-task-name { display: block; }
+
+    .cp-badge { width: 8px; height: 8px; border-radius: 50%; background: #e3392f; margin-left: auto; flex: none; box-shadow: 0 0 0 2px #fbfbfb; }
+    .cp-app[data-read="1"] [data-nav="tasks"] .cp-badge,
+    .cp-app[data-cowork-read="1"] [data-nav="cowork-tasks"] .cp-badge { display: none; }
+
+    .cp-mini { width: 18px; height: 18px; border-radius: 50%; flex: none; }
+    .cp-mini.researcher,
+    .cp-mini.analyst { background: transparent; border: 1.6px solid #4b5563; }
+    .cp-mini.recognition { background: linear-gradient(135deg, #4ade80, #facc15); }
+
+    .cp-section-label { font-size: 12px; color: var(--cp-fg2); padding: 4px 10px 0; }
+    .cp-chats { display: flex; flex-direction: column; gap: 1px; overflow: hidden; }
+    .cp-chat { font-size: 13px; color: #444; padding: 6px 10px; border-radius: 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; }
+    .cp-chat:hover { background: var(--cp-hover); }
+    .cp-chat-sk { display: block; height: 10px; border-radius: 6px; background: #e9e9e9; margin: 9px 10px; }
+
+    .cp-user { margin-top: auto; display: flex; align-items: center; gap: 10px; padding: 10px 8px 2px; border-top: 1px solid var(--cp-line); }
+    .cp-avatar { width: 30px; height: 30px; border-radius: 50%; flex: none; display: grid; place-items: center; background: linear-gradient(135deg, #6b46c1, #0f6cbd); color: #fff; font-size: 12px; font-weight: 700; }
+    .cp-user-name { font-size: 13px; font-weight: 600; }
+    .cp-user-sub { font-size: 11px; color: var(--cp-fg2); }
+
+    .cp-main { position: relative; overflow: hidden; display: flex; }
+    .cp-screen { display: none; flex: 1; min-height: 0; }
+    .cp-screen.is-active { display: flex; flex-direction: column; animation: protoIn .25s ease; }
+
+    .cp-tasks { padding: 30px 40px; overflow: auto; flex: 1; }
+    .cp-tasks-head { display: flex; align-items: center; justify-content: space-between; }
+    .cp-h1 { margin: 0; font-size: 28px; font-weight: 600; letter-spacing: -.01em; }
+    .cp-newbtn { display: inline-flex; align-items: center; gap: 8px; border: 1px solid var(--cp-line); background: #fff; border-radius: 8px; padding: 8px 14px; font-size: 13px; font-weight: 600; cursor: pointer; color: var(--cp-fg); }
+    .cp-newbtn:hover { background: var(--cp-hover); }
+
+    .cp-newchat-home { flex: 1; display: grid; place-items: center; padding: 48px 9%; background: #fff; }
+    .cp-newchat-center { width: min(860px, 100%); transform: translateY(8px); }
+    .cp-newchat-title { margin: 0 0 28px; font-size: 27px; line-height: 1.25; font-weight: 500; color: #242424; }
+    .cp-newchat-input { display: grid; grid-template-columns: 38px minmax(0, 1fr) 34px 42px; align-items: center; gap: 12px; border-bottom: 1.5px solid #4b5563; padding: 0 0 9px; color: #616161; }
+    .cp-newchat-plus { font-size: 29px; line-height: 1; font-weight: 300; color: #616161; }
+    .cp-newchat-placeholder { font-size: 18px; color: #767676; }
+    .cp-newchat-icon { width: 34px; height: 34px; border: 0; border-radius: 50%; display: grid; place-items: center; background: transparent; color: #444; }
+    .cp-newchat-icon.wave { background: #f3f3f3; }
+    .cp-newchat-chips { display: flex; align-items: center; gap: 9px; flex-wrap: wrap; margin: 18px 0 0 52px; }
+    .cp-newchat-chip { border: 0; border-radius: 12px; background: #f5f5f5; padding: 10px 16px; color: #424242; font-size: 15px; font-weight: 500; }
+    .cp-newchat-chip.ms { display: inline-flex; align-items: center; gap: 9px; }
+    .cp-ms-grid { width: 14px; height: 14px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 2px; }
+    .cp-ms-grid span { display: block; }
+    .cp-ms-grid span:nth-child(1) { background: #f35325; }
+    .cp-ms-grid span:nth-child(2) { background: #81bc06; }
+    .cp-ms-grid span:nth-child(3) { background: #05a6f0; }
+    .cp-ms-grid span:nth-child(4) { background: #ffba08; }
+
+    .cp-cowork-home { flex: 1; display: grid; place-items: center; padding: 48px 9%; background: #fff; }
+    .cp-cowork-center { width: min(760px, 100%); }
+    .cp-cowork-title { margin: 0 0 28px; text-align: center; font-size: 25px; line-height: 1.25; font-weight: 550; color: #242424; }
+    .cp-task-input { display: grid; grid-template-columns: 34px minmax(0, 1fr) 32px 32px; align-items: center; gap: 12px; min-height: 62px; border: 1px solid #d0d0d0; border-radius: 999px; padding: 0 18px; box-shadow: 0 1px 2px rgba(0,0,0,.04); color: #616161; }
+    .cp-task-placeholder { font-size: 15px; color: #777; }
+    .cp-task-tip { margin-top: 12px; text-align: center; color: #6b7280; font-size: 12px; }
+    .cp-task-tip kbd { background: #f3f4f6; border: 1px solid #e5e7eb; border-radius: 5px; padding: 1px 6px; font: inherit; color: #4b5563; }
+    .cp-try-row { display: flex; justify-content: space-between; align-items: center; margin-top: 36px; color: #4b5563; font-size: 13px; font-weight: 650; }
+    .cp-show-more-link { border: 0; background: transparent; color: #6b7280; font: inherit; cursor: pointer; }
+    .cp-up-next-row { display: flex; justify-content: space-between; align-items: center; margin-top: 28px; color: #242424; font-size: 14px; font-weight: 700; }
+    .cp-up-next-card { width: 100%; min-height: 76px; margin-top: 14px; border: 1px solid #dedede; border-radius: 16px; background: #fff; padding: 0 24px; display: flex; align-items: center; gap: 16px; box-shadow: 0 1px 2px rgba(0,0,0,.03); text-align: left; cursor: pointer; }
+    .cp-up-next-card:hover { background: #fafafa; border-color: #cfcfcf; }
+    .cp-up-next-title { font-size: 14px; font-weight: 700; color: #242424; }
+    .cp-app[data-sent="1"] .cp-up-next-row,
+    .cp-app[data-sent="1"] .cp-up-next-card { display: none; }
+    .cp-suggestion-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 14px; }
+    .cp-suggestion-card { min-height: 126px; border: 1px solid #dedede; border-radius: 14px; background: #fff; padding: 22px; display: flex; flex-direction: column; justify-content: space-between; box-shadow: 0 1px 2px rgba(0,0,0,.03); }
+    .cp-suggestion-icon { width: 40px; height: 40px; border-radius: 10px; display: grid; place-items: center; font-size: 22px; background: #f4f4f5; }
+    .cp-suggestion-title { font-size: 17px; font-weight: 600; color: #242424; }
+    .cp-cowork-tasks-home { flex: 1; padding: 48px 9%; background: #fff; overflow: auto; }
+    .cp-cowork-tasks-center { width: min(980px, 100%); margin: 0 auto; }
+    .cp-cowork-search-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 38px; }
+    .cp-cowork-search { display: flex; align-items: center; gap: 12px; min-height: 42px; border-bottom: 1.5px solid #5f5f5f; color: #616161; }
+    .cp-cowork-search .cp-i { width: 22px; height: 22px; stroke-width: 1.5; }
+    .cp-cowork-search-placeholder { font-size: 14px; color: #686868; }
+    .cp-cowork-filter { display: inline-flex; align-items: center; gap: 13px; border: 0; background: transparent; color: #242424; font-size: 14px; font-weight: 500; cursor: pointer; padding: 8px 0; }
+    .cp-cowork-filter .cp-i { width: 22px; height: 22px; }
+    .cp-cowork-task-card { width: 100%; margin-top: 44px; border: 0; background: #fff; padding: 0; display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 24px; text-align: left; cursor: pointer; }
+    .cp-cowork-task-card:hover .cp-cowork-task-title { text-decoration: underline; text-underline-offset: 3px; }
+    .cp-cowork-task-title { font-size: 14px; line-height: 1.3; font-weight: 700; color: #242424; }
+    .cp-cowork-task-meta { margin-top: 10px; color: #b3261e; font-size: 14px; line-height: 1.4; }
+    .cp-complete-only { display: none; }
+    .cp-app[data-sent="1"] .cp-attention-only { display: none; }
+    .cp-app[data-sent="1"] .cp-complete-only { display: inline; }
+    .cp-app[data-sent="1"] .cp-cowork-task-meta { color: #616161; }
+    .cp-cowork-more { border: 0; background: transparent; color: #6b7280; font-size: 18px; line-height: 1; cursor: pointer; padding: 6px 0; }
+
+    .cp-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 26px; }
+    .cp-stat { border: 1px solid var(--cp-line); border-radius: 12px; padding: 18px 20px; }
+    .cp-stat .lbl { font-size: 14px; color: var(--cp-fg2); }
+    .cp-stat .num { font-size: 38px; font-weight: 600; line-height: 1; margin-top: 12px; }
+    .cp-stat.attention .num { color: #b3261e; }
+    .cp-stats-note { text-align: right; font-size: 12px; color: var(--cp-fg2); margin-top: 8px; }
+
+    .cp-rec-task { display: flex; align-items: center; gap: 16px; border: 1px solid var(--cp-line); border-radius: 12px; padding: 16px 20px; margin-top: 18px; box-shadow: 0 1px 2px rgba(0, 0, 0, .05); background: linear-gradient(180deg, #fbfaff, #fff); }
+    .cp-rec-msg { flex: 1; font-size: 15px; font-weight: 600; }
+    .cp-rec-top { display: flex; align-items: center; justify-content: space-between; }
+    .cp-attention-pill { display: inline-flex; align-items: center; gap: 6px; background: #fdf3f2; color: #b3261e; border: 1px solid #f4d4d1; border-radius: 999px; padding: 4px 10px; font-size: 11px; font-weight: 700; }
+    .cp-attention-pill::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: #b3261e; }
+    .cp-rec-time { font-size: 12px; color: var(--cp-fg2); }
+    .cp-rec-title { margin-top: 12px; font-size: 17px; font-weight: 700; }
+    .cp-rec-sub { margin-top: 6px; font-size: 14px; color: #444; line-height: 1.5; }
+    .cp-rec-foot { display: flex; align-items: center; justify-content: space-between; margin-top: 16px; gap: 14px; flex-wrap: wrap; }
+    .cp-contrib-avatars { display: flex; align-items: center; }
+    .cp-ca { width: 30px; height: 30px; border-radius: 50%; background: var(--c, #0f6cbd); color: #fff; display: grid; place-items: center; font-size: 11px; font-weight: 700; border: 2px solid #fff; margin-left: -8px; }
+    .cp-ca:first-child { margin-left: 0; }
+    .cp-contrib-names { margin-left: 12px; font-size: 13px; color: var(--cp-fg2); }
+    .cp-backend { margin-top: 14px; font-size: 11.5px; color: #8a8a8a; }
+    .cp-backend strong { color: #6b6b6b; }
+
+    .cp-task-list { margin-top: 22px; display: flex; flex-direction: column; }
+    .cp-task-row { display: flex; align-items: center; gap: 16px; padding: 16px 4px; border-top: 1px solid #f0f0f0; }
+    .cp-task-row .title { flex: 1; font-size: 15px; }
+    .cp-status { display: inline-flex; align-items: center; gap: 6px; background: #f0f0f0; color: #444; border-radius: 999px; padding: 5px 12px; font-size: 13px; font-weight: 600; }
+    .cp-status.done { background: #dff6e6; color: #0e7a3b; }
+    .cp-copilot-ic { width: 22px; height: 22px; flex: none; border-radius: 50%; background: linear-gradient(135deg, #4ade80, #facc15); }
+    .cp-date { font-size: 13px; color: var(--cp-fg2); min-width: 56px; text-align: right; }
+    .cp-showmore { align-self: center; margin-top: 20px; border: 1px solid var(--cp-line); background: #fff; border-radius: 999px; padding: 8px 18px; font-size: 13px; font-weight: 600; cursor: pointer; }
+    .cp-showmore:hover { background: var(--cp-hover); }
+
+    /* chat */
+    .cp-chat-screen { display: flex; flex-direction: column; height: 100%; flex: 1; min-height: 0; }
+    .cp-app[data-mode-state="cowork"][data-workspace="1"] .cp-chat-screen { display: grid; grid-template-columns: minmax(0, 1fr) 360px; grid-template-rows: minmax(0, 1fr) auto; }
+    .cp-thread { flex: 1; overflow: auto; padding: 28px 10%; display: flex; flex-direction: column; gap: 18px; }
+    .cp-app[data-mode-state="cowork"][data-workspace="1"] .cp-thread { grid-column: 1; grid-row: 1; padding: 28px 7%; }
+    .cp-app[data-mode-state="cowork"][data-workspace="1"] .cp-composer { grid-column: 1; grid-row: 2; padding-left: 7%; padding-right: 7%; }
+    .cp-app[data-mode-state="cowork"] #cpDraftCard { display: none !important; }
+    .cp-msg { display: none; }
+    .cp-msg.show { display: flex; animation: protoIn .25s ease; }
+    .cp-msg.user.show { display: block; }
+    .cp-msg.user { align-self: flex-end; max-width: 74%; background: #eef4fb; border: 1px solid #dbe7f5; border-radius: 14px; padding: 12px 15px; font-size: 14px; line-height: 1.5; white-space: pre-line; }
+    .cp-msg.ai { align-self: flex-start; max-width: 90%; gap: 12px; }
+    .cp-ai-body { background: #fff; border: 1px solid var(--cp-line); border-radius: 14px; padding: 15px 17px; font-size: 14px; line-height: 1.55; box-shadow: 0 1px 2px rgba(0, 0, 0, .04); }
+    .cp-ai-body.cp-plain { background: transparent; border: 0; box-shadow: none; padding: 3px 0; }
+    .cp-typing { align-items: center; }
+    .cp-typing-dots { display: inline-flex; gap: 5px; padding: 6px 2px; }
+    .cp-typing-dots span { width: 7px; height: 7px; border-radius: 50%; background: #b9b9bd; animation: cpBlink 1.4s infinite ease-in-out both; }
+    .cp-typing-dots span:nth-child(2) { animation-delay: .2s; }
+    .cp-typing-dots span:nth-child(3) { animation-delay: .4s; }
+    @keyframes cpBlink { 0%, 80%, 100% { opacity: .25; transform: translateY(0); } 40% { opacity: 1; transform: translateY(-3px); } }
+    .cp-divider { display: none; flex: none; height: 1px; background: #c9c9c9; margin: 12px 0; align-self: flex-start; width: 90%; }
+    .cp-divider.show { display: block; }
+    .cp-contrib { margin-top: 12px; }
+    .cp-contrib .nm { font-weight: 700; }
+    .cp-contrib ul { margin: 4px 0 0; padding-left: 18px; color: var(--cp-fg2); }
+    .cp-contrib li + li { margin-top: 2px; }
+    .cp-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+    .cp-chip { border: 1px solid var(--cp-brand); color: var(--cp-brand); background: #fff; border-radius: 999px; padding: 7px 14px; font-size: 13px; font-weight: 600; cursor: pointer; }
+    .cp-chip:hover { background: #eef4fb; }
+    .cp-chip.primary { background: var(--cp-brand); color: #fff; }
+    .cp-chip.primary:hover { background: var(--cp-brand-press); }
+
+    .cp-field-label { font-size: 11px; font-weight: 700; color: var(--cp-fg2); text-transform: uppercase; letter-spacing: .03em; margin-bottom: 6px; }
+    .cp-rt { border: 1px solid var(--cp-line); border-radius: 10px; padding: 12px 14px; font-size: 14px; line-height: 1.6; background: #fff; outline: none; }
+    .cp-rt:focus { border-color: var(--cp-brand); box-shadow: 0 0 0 2px color-mix(in srgb, var(--cp-brand) 18%, #fff); }
+    .cp-rt-wrap { border: 1px solid var(--cp-line); border-radius: 10px; background: #fff; }
+    .cp-rt-wrap:focus-within { border-color: var(--cp-brand); box-shadow: 0 0 0 2px color-mix(in srgb, var(--cp-brand) 18%, #fff); }
+    .cp-rt-wrap .cp-rt { border: 0; border-radius: 0; }
+    .cp-rt-wrap .cp-rt:focus { border: 0; box-shadow: none; }
+    .cp-rt-footer { display: flex; align-items: center; justify-content: space-between; padding: 6px 14px 10px; }
+    .cp-char { font-size: 11.5px; color: var(--cp-fg2); }
+    .cp-proof { display: inline-flex; align-items: center; gap: 6px; border: 0; background: transparent; color: var(--cp-brand); font-size: 12.5px; font-weight: 600; cursor: pointer; padding: 0; }
+    .cp-proof svg { width: 15px; height: 15px; flex: none; }
+    .cp-proof:hover { text-decoration: underline; }
+    .cp-field-row { margin-top: 14px; }
+    .cp-banner-field { margin-top: 24px; }
+    .cp-spaced-field { margin-top: 24px; }
+    .cp-cat { display: flex; align-items: center; gap: 10px; }
+    .cp-cat-hint { font-size: 12px; color: var(--cp-fg2); }
+    .cp-radio-row { display: flex; gap: 18px; }
+    .cp-radio-row.vertical { flex-direction: column; gap: 10px; }
+    .cp-radio { display: flex; align-items: center; gap: 7px; font-size: 13px; cursor: pointer; }
+    .cp-radio input { accent-color: var(--cp-brand); }
+    .cp-points { display: flex; gap: 10px; flex-wrap: wrap; }
+    .cp-point-card { border: 1px solid var(--cp-line); border-radius: 10px; padding: 10px 14px; cursor: pointer; min-width: 150px; }
+    .cp-point-card .pc-t { font-size: 13px; font-weight: 700; }
+    .cp-point-card .pc-s { font-size: 12px; color: var(--cp-fg2); margin-top: 2px; }
+    .cp-point-card.sel { border-color: var(--cp-brand); background: #eef4fb; }
+
+    /* category chips */
+    .cp-cat-chips { display: flex; flex-wrap: wrap; gap: 12px; }
+    .cp-cat-chip { display: inline-flex; align-items: center; gap: 7px; border: 1px solid var(--cp-line); background: #fff; color: var(--cp-fg); border-radius: 999px; padding: 7px 13px; font-size: 13px; font-weight: 600; cursor: pointer; }
+    .cp-cat-chip:hover { background: var(--cp-hover); }
+    .cp-cat-chip.sel { border-color: var(--cp-brand); background: #eef4fb; color: var(--cp-brand-press); }
+    .cp-cat-sug { font-size: 12px; font-weight: 500; color: inherit; opacity: .6; margin-left: 2px; }
+    .cp-ai-tag { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .03em; color: #fff; background: var(--cp-brand); border-radius: 999px; padding: 2px 7px; margin-left: 6px; vertical-align: middle; }
+    .cp-title-rt { font-weight: 600; }
+
+    /* banner image */
+    .cp-banner-preview { height: 120px; border-radius: 12px; background: var(--bg, linear-gradient(135deg, #6b46c1, #0f6cbd)); border: 1px solid var(--cp-line); }
+    .cp-banner-strip { display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap; }
+    .cp-banner-thumb { width: 64px; height: 44px; border-radius: 8px; background: var(--bg); border: 2px solid transparent; cursor: pointer; padding: 0; }
+    .cp-banner-thumb.sel { border-color: var(--cp-brand); box-shadow: 0 0 0 2px color-mix(in srgb, var(--cp-brand) 25%, #fff); }
+    .cp-banner-upload { width: 64px; height: 44px; border-radius: 8px; border: 1.5px dashed var(--cp-line); background: #fafafa; color: var(--cp-fg2); font-size: 10px; font-weight: 600; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; }
+    .cp-banner-upload span { font-size: 15px; line-height: 1; }
+    .cp-banner-upload:hover { background: var(--cp-hover); border-color: #c9c9c9; }
+
+    /* points */
+    .cp-points-balance { font-size: 12.5px; color: var(--cp-fg2); margin-bottom: 8px; }
+    .cp-points-link { color: var(--cp-brand); text-decoration: none; font-weight: 600; }
+    .cp-points-link:hover { text-decoration: underline; }
+    .cp-points-select { width: 100%; max-width: 280px; border: 1px solid var(--cp-line); border-radius: 8px; padding: 9px 12px; font: inherit; font-size: 14px; color: var(--cp-fg); background: #fff; cursor: pointer; }
+    .cp-points-select:focus { outline: none; border-color: var(--cp-brand); }
+    .cp-draft-actions { display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
+    .cp-submit-actions { margin-top: 32px; padding-bottom: 24px; }
+    .cp-btn-primary { background: var(--cp-brand); color: #fff; border: 0; border-radius: 8px; padding: 10px 18px; font-size: 14px; font-weight: 600; cursor: pointer; }
+    .cp-btn-primary:hover { background: var(--cp-brand-press); }
+    .cp-btn-primary:disabled { background: #c7c7c7; color: #ffffff; cursor: not-allowed; }
+    .cp-btn-secondary { background: #fff; color: var(--cp-fg); border: 1px solid var(--cp-line); border-radius: 8px; padding: 10px 18px; font-size: 14px; font-weight: 600; cursor: pointer; }
+    .cp-btn-secondary:hover { background: var(--cp-hover); }
+
+    .cp-workspace-panel { display: none; grid-column: 2; grid-row: 1 / span 2; border-left: 1px solid var(--cp-line); background: #fff; min-height: 0; flex-direction: column; }
+    .cp-app[data-mode-state="cowork"][data-workspace="1"] .cp-workspace-panel { display: flex; }
+    .cp-workspace-head { height: 56px; display: flex; align-items: center; justify-content: space-between; padding: 0 18px 0 22px; border-bottom: 1px solid #f0f0f0; flex: none; }
+    .cp-workspace-title { font-size: 16px; font-weight: 600; color: #242424; }
+    .cp-workspace-close { border: 0; background: transparent; color: #444; width: 32px; height: 32px; border-radius: 8px; display: grid; place-items: center; cursor: pointer; }
+    .cp-workspace-close:hover { background: var(--cp-hover); }
+    .cp-workspace-body { padding: 18px 20px 24px; overflow: auto; min-height: 0; }
+    .cp-workspace-body .cp-cat-chips { gap: 8px; }
+    .cp-workspace-body .cp-cat-chip { font-size: 12px; padding: 6px 10px; }
+    .cp-workspace-body .cp-banner-preview { height: 88px; }
+    .cp-workspace-body .cp-banner-thumb,
+    .cp-workspace-body .cp-banner-upload { width: 54px; height: 38px; }
+    .cp-workspace-body .cp-rt { font-size: 13px; }
+    .cp-workspace-body .cp-radio { font-size: 12.5px; }
+    .cp-workspace-body .cp-submit-actions { padding-bottom: 0; }
+    .cp-workspace-reopen { display: none; align-items: center; gap: 6px; margin-top: 10px; border: 0; background: transparent; color: #616161; font-size: 12px; font-weight: 600; line-height: 1.2; padding: 0; cursor: pointer; }
+    .cp-workspace-reopen .cp-i { width: 12px; height: 12px; stroke-width: 2; }
+    .cp-workspace-reopen:hover { color: #242424; text-decoration: underline; text-underline-offset: 3px; }
+    .cp-app[data-mode-state="cowork"] .cp-workspace-reopen { display: inline-flex; }
+    .cp-cowork-draft-copy { display: none; }
+    .cp-app[data-mode-state="cowork"] .cp-chat-draft-copy { display: none; }
+    .cp-app[data-mode-state="cowork"] .cp-cowork-draft-copy { display: block; }
+
+    .cp-composer { border-top: 1px solid var(--cp-line); padding: 14px 10% 18px; }
+    .cp-input-wrap { display: flex; align-items: flex-end; gap: 10px; border: 1px solid var(--cp-line); border-radius: 14px; padding: 10px 12px; box-shadow: 0 1px 3px rgba(0, 0, 0, .05); }
+    .cp-input-wrap:focus-within { border-color: var(--cp-brand); }
+    .cp-input { flex: 1; border: 0; outline: 0; resize: none; font: inherit; font-size: 14px; line-height: 1.5; color: var(--cp-fg); background: transparent; max-height: 240px; overflow-y: auto; }
+    .cp-send { width: 34px; height: 34px; flex: none; border: 0; border-radius: 9px; background: var(--cp-brand); cursor: pointer; display: grid; place-items: center; }
+    .cp-send:hover { background: var(--cp-brand-press); }
+    .cp-send .cp-i { stroke: #fff; }
+  </style>
+</head>
+<body>
+  <div class="cp-app" id="cpApp" data-screen="newchat" data-sent="0" data-mode-state="chat">
+    <aside class="cp-rail">
+      <div class="cp-rail-top">
+        <span class="cp-logo" aria-label="Copilot"></span>
+        <span class="cp-apps" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="5" r="1.6"/><circle cx="12" cy="5" r="1.6"/><circle cx="19" cy="5" r="1.6"/><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/><circle cx="5" cy="19" r="1.6"/><circle cx="12" cy="19" r="1.6"/><circle cx="19" cy="19" r="1.6"/></svg></span>
+      </div>
+      <div class="cp-seg">
+        <button class="cp-seg-btn is-on" type="button" data-mode="chat" data-go="newchat">Chat</button>
+        <button class="cp-seg-btn" type="button" data-mode="cowork" data-go="cowork">Cowork</button>
+      </div>
+      <nav class="cp-nav chat-only">
+        <button class="cp-nav-item is-active" type="button" data-go="newchat" data-nav="newchat"><svg class="cp-i" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>New chat</button>
+        <button class="cp-nav-item" type="button"><svg class="cp-i" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.2-4.2"/></svg>Search</button>
+        <button class="cp-nav-item" type="button"><svg class="cp-i" viewBox="0 0 24 24"><rect x="4" y="4" width="3.4" height="16" rx="1"/><rect x="10.3" y="4" width="3.4" height="16" rx="1"/><path d="M17 5.4l3 .8-3.1 13.8-3-.8z"/></svg>Library</button>
+        <button class="cp-nav-item" type="button" data-go="tasks" data-nav="tasks"><svg class="cp-i" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="17" height="17" rx="4"/><path d="m8 12 2.8 2.8L16 9"/></svg>Tasks<span class="cp-badge" aria-label="Update available"></span></button>
+        <button class="cp-nav-item" type="button"><svg class="cp-i" viewBox="0 0 24 24"><path d="m9 8-4 4 4 4"/><path d="m15 8 4 4-4 4"/></svg>Agents</button>
+      </nav>
+      <nav class="cp-nav cp-cowork-nav cowork-only">
+        <button class="cp-nav-item is-active" type="button" data-go="cowork" data-nav="cowork"><svg class="cp-i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v8"/><path d="M8 12h8"/></svg>New task</button>
+        <button class="cp-nav-item" type="button" data-go="cowork-tasks" data-nav="cowork-tasks"><svg class="cp-i" viewBox="0 0 24 24"><path d="M8 6h13"/><path d="M8 12h13"/><path d="M8 18h13"/><path d="M3.5 6h.01"/><path d="M3.5 12h.01"/><path d="M3.5 18h.01"/></svg>My tasks<span class="cp-badge" aria-label="Update available"></span></button>
+        <button class="cp-nav-item" type="button"><svg class="cp-i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 8v5l3 2"/></svg>Scheduled</button>
+        <button class="cp-nav-item" type="button"><svg class="cp-i" viewBox="0 0 24 24"><rect x="4" y="7" width="16" height="12" rx="2"/><path d="M9 7V5h6v2"/></svg>Customize</button>
+        <button class="cp-cowork-task-name" type="button" data-go="cowork-recognition" data-nav="cowork-recognition">Recognize contributors from Project Voyager</button>
+      </nav>
+      <div class="cp-section-label chat-only">Pinned</div>
+      <nav class="cp-nav chat-only">
+        <button class="cp-nav-item" type="button"><span class="cp-mini researcher"></span>Researcher</button>
+        <button class="cp-nav-item" type="button"><span class="cp-mini analyst"></span>Analyst</button>
+        <button class="cp-nav-item" type="button" data-go="recognition" data-nav="recognition"><span class="cp-mini recognition"></span>Recognition</button>
+      </nav>
+      <div class="cp-section-label chat-only">Chats</div>
+      <div class="cp-chats chat-only">
+        <span class="cp-chat-sk" style="width:88%"></span>
+        <span class="cp-chat-sk" style="width:72%"></span>
+        <span class="cp-chat-sk" style="width:81%"></span>
+        <span class="cp-chat-sk" style="width:64%"></span>
+        <span class="cp-chat-sk" style="width:76%"></span>
+      </div>
+      <div class="cp-user">
+        <div class="cp-avatar">XP</div>
+        <div class="grow"><div class="cp-user-name">Xinjia Pang</div><div class="cp-user-sub">M365 Copilot (Premium)</div></div>
+      </div>
+    </aside>
+
+    <main class="cp-main">
+      <!-- NEW CHAT — flow entry point -->
+      <section class="cp-screen is-active" data-screen="newchat">
+        <div class="cp-newchat-home">
+          <div class="cp-newchat-center">
+            <h2 class="cp-newchat-title">Hi, I can help you recap and prep for meetings</h2>
+            <div class="cp-newchat-input" aria-label="Message Copilot">
+              <span class="cp-newchat-plus" aria-hidden="true">+</span>
+              <span class="cp-newchat-placeholder">Message Copilot</span>
+              <button class="cp-newchat-icon" type="button" aria-label="Voice input"><svg class="cp-i" viewBox="0 0 24 24"><path d="M12 3a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V6a3 3 0 0 0-3-3Z"/><path d="M19 11a7 7 0 0 1-14 0"/><path d="M12 18v3"/></svg></button>
+              <button class="cp-newchat-icon wave" type="button" aria-label="Audio mode"><svg class="cp-i" viewBox="0 0 24 24"><path d="M4 10v4"/><path d="M8 7v10"/><path d="M12 4v16"/><path d="M16 7v10"/><path d="M20 10v4"/></svg></button>
+            </div>
+            <div class="cp-newchat-chips">
+              <button class="cp-newchat-chip ms" type="button"><span class="cp-ms-grid" aria-hidden="true"><span></span><span></span><span></span><span></span></span>Suggested</button>
+              <button class="cp-newchat-chip" type="button">Files</button>
+              <button class="cp-newchat-chip" type="button">Emails</button>
+              <button class="cp-newchat-chip" type="button">People</button>
+              <button class="cp-newchat-chip" type="button">•••</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- COWORK — task start surface -->
+      <section class="cp-screen" data-screen="cowork">
+        <div class="cp-cowork-home">
+          <div class="cp-cowork-center">
+            <h2 class="cp-cowork-title">What's on the agenda today?</h2>
+            <div class="cp-task-input" aria-label="Start a task">
+              <span class="cp-newchat-plus" aria-hidden="true">+</span>
+              <span class="cp-task-placeholder">Start a task...</span>
+              <button class="cp-newchat-icon" type="button" aria-label="Draft with Copilot"><svg class="cp-i" viewBox="0 0 24 24"><path d="M12 3l1.4 4.1L17.5 8.5l-4.1 1.4L12 14l-1.4-4.1-4.1-1.4 4.1-1.4z"/><path d="M18 14l.8 2.2L21 17l-2.2.8L18 20l-.8-2.2L15 17l2.2-.8z"/></svg></button>
+              <button class="cp-newchat-icon" type="button" aria-label="Voice input"><svg class="cp-i" viewBox="0 0 24 24"><path d="M12 3a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V6a3 3 0 0 0-3-3Z"/><path d="M19 11a7 7 0 0 1-14 0"/><path d="M12 18v3"/></svg></button>
+            </div>
+            <div class="cp-task-tip">Tip: Press <kbd>⌘+U</kbd> to upload images and files from your device.</div>
+            <div class="cp-up-next-row">
+              <span>Up next</span>
+              <button class="cp-show-more-link" type="button">Show more</button>
+            </div>
+            <button class="cp-up-next-card" type="button" data-action="review">
+              <span class="cp-up-next-title">Recognize contributors from Project Voyager</span>
+            </button>
+            <div class="cp-try-row">
+              <span>Try these next</span>
+              <button class="cp-show-more-link" type="button">Show more</button>
+            </div>
+            <div class="cp-suggestion-grid">
+              <div class="cp-suggestion-card"><div class="cp-suggestion-icon">✉️</div><div class="cp-suggestion-title">Organize my inbox</div></div>
+              <div class="cp-suggestion-card"><div class="cp-suggestion-icon">🧊</div><div class="cp-suggestion-title">Arrange my week</div></div>
+              <div class="cp-suggestion-card"><div class="cp-suggestion-icon">📖</div><div class="cp-suggestion-title">Prep for a meeting</div></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- COWORK — My tasks -->
+      <section class="cp-screen" data-screen="cowork-tasks">
+        <div class="cp-cowork-tasks-home">
+          <div class="cp-cowork-tasks-center">
+            <div class="cp-cowork-search-row">
+              <div class="cp-cowork-search" aria-label="Search your tasks">
+                <svg class="cp-i" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.2-4.2"/></svg>
+                <span class="cp-cowork-search-placeholder">Search your tasks</span>
+              </div>
+              <button class="cp-cowork-filter" type="button">
+                <svg class="cp-i" viewBox="0 0 24 24"><path d="M4 7h16"/><path d="M7 12h10"/><path d="M10 17h4"/></svg>
+                Filter
+              </button>
+            </div>
+            <button class="cp-cowork-task-card" type="button" data-action="review">
+              <div>
+                <div class="cp-cowork-task-title">Recognize contributors from Project Voyager</div>
+                <div class="cp-cowork-task-meta"><span class="cp-attention-only">Need attention</span><span class="cp-complete-only">Complete today</span></div>
+              </div>
+              <span class="cp-cowork-more" aria-hidden="true">•••</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- TASKS — Needs attention (1) -->
+      <section class="cp-screen" data-screen="tasks">
+        <div class="cp-tasks">
+          <div class="cp-tasks-head">
+            <h2 class="cp-h1">Tasks</h2>
+            <button class="cp-newbtn" type="button"><svg class="cp-i" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>New</button>
+          </div>
+          <div class="cp-stats">
+            <div class="cp-stat attention"><div class="lbl">Needs attention</div><div class="num">1</div></div>
+            <div class="cp-stat"><div class="lbl">Complete</div><div class="num">0</div></div>
+            <div class="cp-stat"><div class="lbl">In progress</div><div class="num">0</div></div>
+          </div>
+          <div class="cp-stats-note">Based on tasks loaded below</div>
+
+          <div class="cp-rec-task">
+            <span class="cp-rec-msg">Recognize contributors from Project Voyager</span>
+            <span class="cp-attention-pill">Needs attention</span>
+            <span class="cp-rec-time">Jun 25, 2026</span>
+            <span class="cp-copilot-ic"></span>
+            <button class="cp-btn-primary" type="button" data-action="review">Review</button>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- TASKS — Needs attention (0), recognition task completed -->
+      <section class="cp-screen" data-screen="tasks-done">
+        <div class="cp-tasks">
+          <div class="cp-tasks-head">
+            <h2 class="cp-h1">Tasks</h2>
+            <button class="cp-newbtn" type="button"><svg class="cp-i" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>New</button>
+          </div>
+          <div class="cp-stats">
+            <div class="cp-stat"><div class="lbl">Needs attention</div><div class="num">0</div></div>
+            <div class="cp-stat"><div class="lbl">Complete</div><div class="num">1</div></div>
+            <div class="cp-stat"><div class="lbl">In progress</div><div class="num">0</div></div>
+          </div>
+          <div class="cp-stats-note">Based on tasks loaded below</div>
+          <div class="cp-task-list" style="margin-top:24px">
+            <div class="cp-task-row"><span class="title">Review Recognition Opportunity</span><span class="cp-status done">✓ Complete</span><span class="cp-copilot-ic"></span><span class="cp-date">Just now</span></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- COPILOT CHAT -->
+      <section class="cp-screen" data-screen="chat">
+        <div class="cp-chat-screen">
+          <div class="cp-thread" id="cpThread">
+            <div class="cp-msg user" data-step="1">Review my recent collaboration activity from the past 30 days for Project Voyager. Identify people whose contributions deserve recognition based on our work together.
+
+Consider:
+- Teams meetings
+- Teams chats
+- Outlook conversations
+- Shared documents
+- Collaboration frequency
+- Support provided
+- Problem solving
+- Mentorship
+
+Recommend recipients and generate personalized recognition drafts.</div>
+            <div class="cp-msg ai cp-typing" id="cpTyping1">
+              <div class="cp-typing-dots"><span></span><span></span><span></span></div>
+            </div>
+            <div class="cp-msg ai" id="cpRec1">
+              <div class="cp-ai-body cp-plain">
+                <div>Over the past three weeks, you collaborated with 12 teammates across meetings, chats, and shared documents.</div>
+                <div style="margin-top:10px">Based on project participation and collaboration patterns, I identified three people whose contributions stand out.</div>
+                <div class="cp-contrib"><div class="nm">Jamie</div><ul><li>Led UX strategy and design reviews</li><li>Helped align engineering and design</li><li>Frequently unblocked cross-team discussions</li></ul></div>
+                <div class="cp-contrib"><div class="nm">Steven</div><ul><li>Coordinated engineering implementation</li><li>Reviewed multiple pull requests</li><li>Helped resolve critical launch issues</li></ul></div>
+                <div class="cp-contrib"><div class="nm">Sarah</div><ul><li>Organized launch readiness</li><li>Improved project documentation</li><li>Mentored new contributors</li></ul></div>
+              </div>
+            </div>
+            <div class="cp-msg ai cp-typing" id="cpTyping2">
+              <div class="cp-typing-dots"><span></span><span></span><span></span></div>
+            </div>
+            <div class="cp-divider" id="cpDivider"></div>
+            <div class="cp-msg ai" id="cpRec2">
+              <div class="cp-ai-body cp-plain">
+                <div>Based on your recent collaboration, I believe <strong>Jamie</strong> would be the strongest candidate for recognition.</div>
+                <div style="margin-top:10px">She consistently demonstrated leadership, collaboration, and helped the team deliver Project Voyager successfully.</div>
+              </div>
+            </div>
+            <div class="cp-divider" id="cpDivider2"></div>
+            <div class="cp-msg ai cp-typing" id="cpTyping3">
+              <div class="cp-typing-dots"><span></span><span></span><span></span></div>
+            </div>
+            <div class="cp-msg ai" id="cpRec3">
+              <div class="cp-ai-body cp-plain">
+                <div>I can help you create a personalized recognition message based on your recent collaboration.</div>
+                <div style="margin-top:10px">Whenever you're ready, let me know and I'll draft it for you.</div>
+              </div>
+            </div>
+            <div class="cp-msg user" data-step="2">Recognize Jamie</div>
+            <div class="cp-msg ai cp-typing" id="cpTypingDraft">
+              <div class="cp-typing-dots"><span></span><span></span><span></span></div>
+            </div>
+            <div class="cp-msg ai" id="cpDraftIntro">
+              <div class="cp-ai-body cp-plain">
+                <div class="cp-chat-draft-copy">Here's a draft recognition for <strong>Jamie</strong> — edit anything before sending.</div>
+                <div class="cp-cowork-draft-copy">
+                  <div>I've prepared a recognition draft for <strong>Jamie</strong>.</div>
+                  <div style="margin-top:10px">Review and customize it in the workspace before sending.</div>
+                </div>
+                <button class="cp-workspace-reopen" type="button" data-action="open-workspace">
+                  Open Recognition Draft
+                  <svg class="cp-i" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+                </button>
+              </div>
+            </div>
+            <div class="cp-divider" id="cpCoworkConfirmationDivider"></div>
+            <div class="cp-msg ai cp-typing" id="cpCoworkConfirmationTyping">
+              <div class="cp-typing-dots"><span></span><span></span><span></span></div>
+            </div>
+            <div class="cp-msg ai" id="cpCoworkConfirmation">
+              <div class="cp-ai-body cp-plain">
+                <div>✅ Recognition sent successfully.</div>
+                <br>
+                <div>Jamie's recognition has been delivered.</div>
+                <br>
+                <div>While reviewing Project Voyager, I also identified two additional teammates whose contributions may deserve recognition.</div>
+                <br>
+                <div>• Steven<br>• Sarah</div>
+                <br>
+                <div>If you'd like, I can prepare recognition drafts for them as well.</div>
+              </div>
+            </div>
+            <div class="cp-msg ai" id="cpDraftCard">
+              <div class="cp-ai-body">
+                <div class="cp-draft">
+                  <div class="cp-field-row"><div class="cp-field-label">Recognition category</div>
+                    <div class="cp-cat-chips">
+                      <button class="cp-cat-chip sel" type="button" data-cat="Collaboration">Collaboration <span class="cp-cat-sug">(suggested)</span></button>
+                      <button class="cp-cat-chip" type="button" data-cat="Leadership">Leadership</button>
+                      <button class="cp-cat-chip" type="button" data-cat="Impact">Impact</button>
+                      <button class="cp-cat-chip" type="button" data-cat="Innovation">Innovation</button>
+                      <button class="cp-cat-chip" type="button" data-cat="Teamwork">Teamwork</button>
+                      <button class="cp-cat-chip" type="button" data-cat="Mentorship">Mentorship</button>
+                    </div>
+                  </div>
+                  <div class="cp-field-row cp-banner-field"><div class="cp-field-label">Banner image</div>
+                    <div class="cp-banner-preview cp-banner-preview-field" id="cpBannerPreview" style="--bg:linear-gradient(135deg,#6b46c1,#0f6cbd)"></div>
+                    <div class="cp-banner-strip">
+                      <button class="cp-banner-thumb sel" type="button" style="--bg:linear-gradient(135deg,#6b46c1,#0f6cbd)" aria-label="Image option 1"></button>
+                      <button class="cp-banner-thumb" type="button" style="--bg:linear-gradient(135deg,#0f9d58,#33c481)" aria-label="Image option 2"></button>
+                      <button class="cp-banner-thumb" type="button" style="--bg:linear-gradient(135deg,#d83b01,#f7a440)" aria-label="Image option 3"></button>
+                      <button class="cp-banner-thumb" type="button" style="--bg:linear-gradient(135deg,#c74bd6,#6c4cf1)" aria-label="Image option 4"></button>
+                      <button class="cp-banner-upload" type="button"><span>＋</span>Upload</button>
+                    </div>
+                  </div>
+                  <div class="cp-field-row"><div class="cp-field-label">Title</div>
+                    <div class="cp-rt cp-title-rt cp-rec-title-field" id="cpRecTitle" contenteditable="true">Exceptional collaboration on Project Voyager</div>
+                  </div>
+                  <div class="cp-field-row"><div class="cp-field-label">Recognition</div>
+                    <div class="cp-rt-wrap">
+                      <div class="cp-rt cp-rec-text-field" id="cpRecText" contenteditable="true">Jamie played a critical role in helping the team successfully deliver Project Voyager. Her thoughtful design feedback, cross-team collaboration, and leadership significantly improved the final experience.</div>
+                      <div class="cp-rt-footer">
+                        <span class="cp-char cp-char-count-field" id="cpCharCount">0/500 character limit</span>
+                        <button class="cp-proof" type="button"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l1.5 4.5L18 8l-4.5 1.5L12 14l-1.5-4.5L6 8l4.5-1.5z"/><path d="M18.5 13l.9 2.6L22 16.5l-2.6.9L18.5 20l-.9-2.6L15 16.5l2.6-.9z"/></svg>proofwriting</button>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="cp-field-row cp-spaced-field"><div class="cp-field-label">Points</div>
+                    <div class="cp-points-balance">You have <strong>1,250</strong> points available · <a href="#" class="cp-points-link">View points details ↗</a></div>
+                    <select class="cp-points-select" aria-label="Points amount">
+                      <option>+200 points (AI suggested)</option>
+                      <option>+100 points</option>
+                      <option>+300 points</option>
+                      <option>+500 points</option>
+                    </select>
+                  </div>
+                  <div class="cp-field-row cp-spaced-field"><div class="cp-field-label">Visibility</div>
+                    <div class="cp-radio-row vertical">
+                      <label class="cp-radio"><input type="radio" name="cpvis" checked> Public - will be share in Viva Engage, and team emails , etc. </label>
+                      <label class="cp-radio"><input type="radio" name="cpvis"> Private - will only send to recipients' email</label>
+                    </div>
+                  </div>
+                  <div class="cp-draft-actions cp-submit-actions">
+                    <button class="cp-btn-primary" type="button" data-action="send-recognition">Send Recognition</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="cp-divider" id="cpConfirmationDivider"></div>
+            <div class="cp-msg ai cp-typing" id="cpConfirmationTyping">
+              <div class="cp-typing-dots"><span></span><span></span><span></span></div>
+            </div>
+            <div class="cp-msg ai" data-step="3">
+              <div class="cp-ai-body cp-plain">
+                <div>✅ Recognition sent successfully.</div>
+                <br>
+                <div>Jamie's recognition has been delivered.</div>
+                <br>
+                <div>While reviewing Project Voyager, I also identified two additional teammates whose contributions may deserve recognition.</div>
+                <br>
+                <div>• Steven<br>• Sarah</div>
+                <br>
+                <div>If you'd like, I can prepare recognition drafts for them as well.</div>
+              </div>
+            </div>
+          </div>
+          <div class="cp-composer">
+            <div class="cp-input-wrap">
+              <textarea class="cp-input" id="cpInput" rows="1" placeholder="Message Copilot"></textarea>
+              <button class="cp-send" id="cpSend" type="button" aria-label="Send"><svg class="cp-i" viewBox="0 0 24 24"><path d="M12 19V6"/><path d="m6 12 6-6 6 6"/></svg></button>
+            </div>
+          </div>
+          <aside class="cp-workspace-panel" aria-label="Workspace">
+            <div class="cp-workspace-head">
+              <div class="cp-workspace-title">Workspace</div>
+              <button class="cp-workspace-close" type="button" data-action="close-workspace" aria-label="Close workspace">
+                <svg class="cp-i" viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+              </button>
+            </div>
+            <div class="cp-workspace-body">
+              <div class="cp-draft">
+                <div class="cp-field-row"><div class="cp-field-label">Recognition category</div>
+                  <div class="cp-cat-chips">
+                    <button class="cp-cat-chip sel" type="button" data-cat="Collaboration">Collaboration <span class="cp-cat-sug">(suggested)</span></button>
+                    <button class="cp-cat-chip" type="button" data-cat="Leadership">Leadership</button>
+                    <button class="cp-cat-chip" type="button" data-cat="Impact">Impact</button>
+                    <button class="cp-cat-chip" type="button" data-cat="Innovation">Innovation</button>
+                    <button class="cp-cat-chip" type="button" data-cat="Teamwork">Teamwork</button>
+                    <button class="cp-cat-chip" type="button" data-cat="Mentorship">Mentorship</button>
+                  </div>
+                </div>
+                <div class="cp-field-row cp-banner-field"><div class="cp-field-label">Banner image</div>
+                  <div class="cp-banner-preview cp-banner-preview-field" style="--bg:linear-gradient(135deg,#6b46c1,#0f6cbd)"></div>
+                  <div class="cp-banner-strip">
+                    <button class="cp-banner-thumb sel" type="button" style="--bg:linear-gradient(135deg,#6b46c1,#0f6cbd)" aria-label="Image option 1"></button>
+                    <button class="cp-banner-thumb" type="button" style="--bg:linear-gradient(135deg,#0f9d58,#33c481)" aria-label="Image option 2"></button>
+                    <button class="cp-banner-thumb" type="button" style="--bg:linear-gradient(135deg,#d83b01,#f7a440)" aria-label="Image option 3"></button>
+                    <button class="cp-banner-thumb" type="button" style="--bg:linear-gradient(135deg,#c74bd6,#6c4cf1)" aria-label="Image option 4"></button>
+                    <button class="cp-banner-upload" type="button"><span>＋</span>Upload</button>
+                  </div>
+                </div>
+                <div class="cp-field-row"><div class="cp-field-label">Title</div>
+                  <div class="cp-rt cp-title-rt cp-rec-title-field" contenteditable="true">Exceptional collaboration on Project Voyager</div>
+                </div>
+                <div class="cp-field-row"><div class="cp-field-label">Recognition</div>
+                  <div class="cp-rt-wrap">
+                    <div class="cp-rt cp-rec-text-field" contenteditable="true">Jamie played a critical role in helping the team successfully deliver Project Voyager. Her thoughtful design feedback, cross-team collaboration, and leadership significantly improved the final experience.</div>
+                    <div class="cp-rt-footer">
+                      <span class="cp-char cp-char-count-field">0/500 character limit</span>
+                      <button class="cp-proof" type="button"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l1.5 4.5L18 8l-4.5 1.5L12 14l-1.5-4.5L6 8l4.5-1.5z"/><path d="M18.5 13l.9 2.6L22 16.5l-2.6.9L18.5 20l-.9-2.6L15 16.5l2.6-.9z"/></svg>proofwriting</button>
+                    </div>
+                  </div>
+                </div>
+                <div class="cp-field-row cp-spaced-field"><div class="cp-field-label">Points</div>
+                  <div class="cp-points-balance">You have <strong>1,250</strong> points available · <a href="#" class="cp-points-link">View points details ↗</a></div>
+                  <select class="cp-points-select" aria-label="Points amount">
+                    <option>+200 points (AI suggested)</option>
+                    <option>+100 points</option>
+                    <option>+300 points</option>
+                    <option>+500 points</option>
+                  </select>
+                </div>
+                <div class="cp-field-row cp-spaced-field"><div class="cp-field-label">Visibility</div>
+                  <div class="cp-radio-row vertical">
+                    <label class="cp-radio"><input type="radio" name="cpvisWorkspace" checked> Public - will be share in Viva Engage, and team emails , etc. </label>
+                    <label class="cp-radio"><input type="radio" name="cpvisWorkspace"> Private - will only send to recipients' email</label>
+                  </div>
+                </div>
+                <div class="cp-draft-actions cp-submit-actions">
+                  <button class="cp-btn-primary" type="button" data-action="send-recognition">Send Recognition</button>
+                </div>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    // Microsoft 365 Copilot recognition workflow
+    (function () {
+      const app = document.getElementById('cpApp');
+      if (!app) return;
+      const screens = app.querySelectorAll('.cp-screen');
+      const input = app.querySelector('#cpInput');
+      const thread = app.querySelector('#cpThread');
+      const PROMPT = `Review my recent collaboration activity from the past 30 days for Project Voyager. Identify people whose contributions deserve recognition based on our work together.
+
+Consider:
+- Teams meetings
+- Teams chats
+- Outlook conversations
+- Shared documents
+- Collaboration frequency
+- Support provided
+- Problem solving
+- Mentorship
+
+Recommend recipients and generate personalized recognition drafts.`;
+      let chatStep = 0;
+
+      function showScreen(name, modeOverride, navOverride) {
+        const isCowork = modeOverride === 'cowork' || name === 'cowork' || name === 'cowork-tasks';
+        app.dataset.modeState = isCowork ? 'cowork' : 'chat';
+        screens.forEach(s => s.classList.toggle('is-active', s.dataset.screen === name));
+        app.querySelectorAll('[data-nav]').forEach(item => item.classList.remove('is-active'));
+        const activeNav = navOverride || (name === 'chat' ? 'recognition' : name === 'newchat' ? 'newchat' : name === 'cowork' ? 'cowork' : name === 'cowork-tasks' ? 'cowork-tasks' : 'tasks');
+        const activeItem = app.querySelector(`[data-nav="${activeNav}"]`);
+        if (activeItem) activeItem.classList.add('is-active');
+        app.querySelectorAll('[data-mode]').forEach(item => item.classList.toggle('is-on', item.dataset.mode === (isCowork ? 'cowork' : 'chat')));
+      }
+      function scrollThread() {
+        if (thread) requestAnimationFrame(() => { thread.scrollTop = thread.scrollHeight; });
+      }
+      function revealChat(step) {
+        app.querySelectorAll('.cp-msg[data-step]').forEach(m => m.classList.toggle('show', Number(m.dataset.step) <= step));
+        scrollThread();
+      }
+      function runRecommendation() {
+        const typing1 = app.querySelector('#cpTyping1');
+        const rec1 = app.querySelector('#cpRec1');
+        const typing2 = app.querySelector('#cpTyping2');
+        const divider = app.querySelector('#cpDivider');
+        const rec2 = app.querySelector('#cpRec2');
+        const typing3 = app.querySelector('#cpTyping3');
+        const rec3 = app.querySelector('#cpRec3');
+        const divider2 = app.querySelector('#cpDivider2');
+        if (!typing1 || !rec1 || !typing2 || !rec2 || rec2.classList.contains('show')) return;
+        typing1.classList.add('show');
+        scrollThread();
+        setTimeout(() => {
+          typing1.classList.remove('show');
+          rec1.classList.add('show');
+          scrollThread();
+          typing2.classList.add('show');
+          scrollThread();
+          setTimeout(() => {
+            typing2.classList.remove('show');
+            if (divider) divider.classList.add('show');
+            rec2.classList.add('show');
+            scrollThread();
+            if (typing3 && rec3) {
+              if (divider2) divider2.classList.add('show');
+              typing3.classList.add('show');
+              scrollThread();
+              setTimeout(() => {
+                typing3.classList.remove('show');
+                rec3.classList.add('show');
+                scrollThread();
+              }, 1200);
+            }
+          }, 1500);
+        }, 1800);
+      }
+
+      function runDraftGeneration() {
+        const typing = app.querySelector('#cpTypingDraft');
+        const intro = app.querySelector('#cpDraftIntro');
+        const card = app.querySelector('#cpDraftCard');
+        if (!typing || !intro || !card || card.classList.contains('show')) return;
+        typing.classList.add('show');
+        scrollThread();
+        setTimeout(() => {
+          typing.classList.remove('show');
+          intro.classList.add('show');
+          if (app.dataset.modeState === 'cowork') app.dataset.workspace = '1';
+          card.classList.add('show');
+          scrollThread();
+        }, 2000);
+      }
+
+      function autosize() {
+        if (!input) return;
+        input.style.height = 'auto';
+        input.style.height = Math.min(input.scrollHeight, 240) + 'px';
+      }
+
+      function returnToCoworkRecognition() {
+        app.dataset.coworkRecognition = '1';
+        app.dataset.workspace = '0';
+        showScreen('chat', 'cowork', 'cowork-recognition');
+        scrollThread();
+      }
+
+      app.querySelectorAll('[data-action="review"]').forEach(b => b.addEventListener('click', () => {
+        const coworkScreen = b.closest('[data-screen="cowork"], [data-screen="cowork-tasks"]');
+        if (coworkScreen && app.dataset.sent === '1') {
+          returnToCoworkRecognition();
+          return;
+        }
+        app.dataset.coworkRecognition = coworkScreen ? '1' : '0';
+        app.dataset.workspace = '0';
+        showScreen('chat', coworkScreen ? 'cowork' : 'chat', coworkScreen ? 'cowork-recognition' : 'recognition'); chatStep = 0; revealChat(0);
+        ['#cpTyping1', '#cpRec1', '#cpTyping2', '#cpDivider', '#cpRec2', '#cpDivider2', '#cpTyping3', '#cpRec3', '#cpTypingDraft', '#cpDraftIntro', '#cpDraftCard', '#cpConfirmationDivider', '#cpConfirmationTyping', '#cpCoworkConfirmationDivider', '#cpCoworkConfirmationTyping', '#cpCoworkConfirmation'].forEach(s => { const el = app.querySelector(s); if (el) el.classList.remove('show'); });
+        app.querySelectorAll('[data-action="send-recognition"]').forEach(btn => { btn.disabled = false; });
+        if (input) { input.value = PROMPT; autosize(); }
+      }));
+
+      function send() {
+        if (input) { input.value = ''; input.style.height = 'auto'; }
+        chatStep = Math.min(chatStep + 1, 2);
+        revealChat(chatStep);
+        if (chatStep === 1) runRecommendation();
+        if (chatStep === 2) runDraftGeneration();
+      }
+      const sendBtn = app.querySelector('#cpSend');
+      if (sendBtn) sendBtn.addEventListener('click', send);
+      if (input) {
+        input.addEventListener('input', autosize);
+        input.addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); } });
+      }
+
+      app.querySelectorAll('[data-action="recognize"]').forEach(c => c.addEventListener('click', () => { chatStep = 2; revealChat(2); }));
+      app.querySelectorAll('[data-action="send-recognition"]').forEach(b => b.addEventListener('click', () => {
+        app.dataset.sent = '1';
+        app.querySelectorAll('[data-action="send-recognition"]').forEach(btn => { btn.disabled = true; });
+        if (app.dataset.modeState === 'cowork') {
+          const divider = app.querySelector('#cpCoworkConfirmationDivider');
+          const typing = app.querySelector('#cpCoworkConfirmationTyping');
+          const confirmation = app.querySelector('#cpCoworkConfirmation');
+          if (divider) divider.classList.add('show');
+          if (typing) typing.classList.add('show');
+          scrollThread();
+          setTimeout(() => {
+            if (typing) typing.classList.remove('show');
+            if (confirmation) confirmation.classList.add('show');
+            scrollThread();
+          }, 2000);
+        } else {
+          const divider = app.querySelector('#cpConfirmationDivider');
+          const typing = app.querySelector('#cpConfirmationTyping');
+          if (divider) divider.classList.add('show');
+          if (typing) typing.classList.add('show');
+          scrollThread();
+          setTimeout(() => {
+            if (typing) typing.classList.remove('show');
+            chatStep = 3;
+            revealChat(3);
+          }, 2000);
+        }
+      }));
+      app.querySelectorAll('[data-action="close-workspace"]').forEach(b => b.addEventListener('click', () => {
+        app.dataset.workspace = '0';
+      }));
+      app.querySelectorAll('[data-action="open-workspace"]').forEach(b => b.addEventListener('click', () => {
+        app.dataset.workspace = '1';
+      }));
+      app.querySelectorAll('[data-action="done"]').forEach(b => b.addEventListener('click', () => showScreen('tasks-done')));
+      app.querySelectorAll('[data-go="newchat"]').forEach(b => b.addEventListener('click', () => showScreen('newchat')));
+      app.querySelectorAll('[data-go="cowork"]').forEach(b => b.addEventListener('click', () => {
+        app.dataset.coworkRecognition = '0';
+        app.dataset.workspace = '0';
+        showScreen('cowork');
+      }));
+      app.querySelectorAll('[data-go="cowork-tasks"]').forEach(b => b.addEventListener('click', () => {
+        app.dataset.coworkRecognition = '0';
+        app.dataset.workspace = '0';
+        app.dataset.coworkRead = '1';
+        showScreen('cowork-tasks');
+      }));
+      app.querySelectorAll('[data-go="cowork-recognition"]').forEach(b => b.addEventListener('click', () => {
+        returnToCoworkRecognition();
+      }));
+      app.querySelectorAll('[data-go="tasks"]').forEach(b => b.addEventListener('click', () => {
+        app.dataset.read = '1';
+        showScreen(app.dataset.sent === '1' ? 'tasks-done' : 'tasks');
+      }));
+      app.querySelectorAll('[data-go="recognition"]').forEach(b => b.addEventListener('click', () => showScreen('chat')));
+      app.querySelectorAll('.cp-point-card').forEach(c => c.addEventListener('click', () => {
+        app.querySelectorAll('.cp-point-card').forEach(x => x.classList.remove('sel'));
+        c.classList.add('sel');
+      }));
+      const BANNER_SETS = {
+        Collaboration: ['linear-gradient(135deg,#6b46c1,#0f6cbd)', 'linear-gradient(135deg,#0f6cbd,#33c481)', 'linear-gradient(135deg,#4f46e5,#06b6d4)', 'linear-gradient(135deg,#7c3aed,#2563eb)'],
+        Leadership: ['linear-gradient(135deg,#d97706,#f59e0b)', 'linear-gradient(135deg,#b45309,#fbbf24)', 'linear-gradient(135deg,#ea580c,#facc15)', 'linear-gradient(135deg,#92400e,#f97316)'],
+        Impact: ['linear-gradient(135deg,#be123c,#fb7185)', 'linear-gradient(135deg,#9f1239,#f43f5e)', 'linear-gradient(135deg,#dc2626,#f87171)', 'linear-gradient(135deg,#e11d48,#fda4af)'],
+        Innovation: ['linear-gradient(135deg,#0f9d58,#33c481)', 'linear-gradient(135deg,#059669,#34d399)', 'linear-gradient(135deg,#0d9488,#2dd4bf)', 'linear-gradient(135deg,#15803d,#86efac)'],
+        Teamwork: ['linear-gradient(135deg,#2563eb,#7c3aed)', 'linear-gradient(135deg,#0ea5e9,#6366f1)', 'linear-gradient(135deg,#8b5cf6,#ec4899)', 'linear-gradient(135deg,#3b82f6,#14b8a6)'],
+        Mentorship: ['linear-gradient(135deg,#c74bd6,#6c4cf1)', 'linear-gradient(135deg,#a855f7,#6366f1)', 'linear-gradient(135deg,#9333ea,#c026d3)', 'linear-gradient(135deg,#7e22ce,#db2777)']
+      };
+      const CATEGORY_COPY = {
+        Collaboration: {
+          title: 'Exceptional collaboration on Project Voyager',
+          recognition: 'Jamie played a critical role in helping the team successfully deliver Project Voyager. Her thoughtful design feedback, cross-team collaboration, and ability to align different perspectives helped the team move forward with clarity.'
+        },
+        Leadership: {
+          title: 'Outstanding leadership on Project Voyager',
+          recognition: 'Jamie helped guide the team through important decisions on Project Voyager. Her steady leadership, clear communication, and ability to bring people together helped the project stay focused and move toward a strong outcome.'
+        },
+        Impact: {
+          title: 'Meaningful impact on Project Voyager',
+          recognition: 'Jamie made a meaningful impact on Project Voyager by helping the team solve key problems and deliver higher-quality work. Her contributions improved the final experience and helped the project reach an important milestone.'
+        },
+        Innovation: {
+          title: 'Innovative thinking on Project Voyager',
+          recognition: 'Jamie brought creative thinking and fresh ideas to Project Voyager. Her ability to explore better approaches, challenge assumptions, and turn ideas into practical improvements helped the team deliver a stronger solution.'
+        },
+        Teamwork: {
+          title: 'Great teamwork on Project Voyager',
+          recognition: 'Jamie showed outstanding teamwork throughout Project Voyager. She supported teammates, shared context generously, and helped keep collaboration moving smoothly across design, engineering, and launch readiness.'
+        },
+        Mentorship: {
+          title: 'Thoughtful mentorship on Project Voyager',
+          recognition: 'Jamie made a real difference by mentoring teammates during Project Voyager. Her guidance, patience, and willingness to share expertise helped others grow while strengthening the team’s overall execution.'
+        }
+      };
+      function updateChars(scope) {
+        const recText = scope.querySelector('.cp-rec-text-field');
+        const charCount = scope.querySelector('.cp-char-count-field');
+        if (recText && charCount) charCount.textContent = recText.textContent.trim().length + '/500 character limit';
+      }
+      function setCategoryCopy(scope, cat) {
+        const copy = CATEGORY_COPY[cat] || CATEGORY_COPY.Collaboration;
+        const recTitle = scope.querySelector('.cp-rec-title-field');
+        const recText = scope.querySelector('.cp-rec-text-field');
+        if (recTitle) recTitle.textContent = copy.title;
+        if (recText) recText.textContent = copy.recognition;
+        updateChars(scope);
+      }
+      function setBannerSet(scope, cat) {
+        const set = BANNER_SETS[cat] || BANNER_SETS.Collaboration;
+        const strip = scope.querySelector('.cp-banner-strip');
+        const preview = scope.querySelector('.cp-banner-preview-field');
+        if (!strip) return;
+        const upload = strip.querySelector('.cp-banner-upload');
+        strip.querySelectorAll('.cp-banner-thumb').forEach(t => t.remove());
+        set.forEach((bg, i) => {
+          const b = document.createElement('button');
+          b.type = 'button';
+          b.className = 'cp-banner-thumb' + (i === 0 ? ' sel' : '');
+          b.style.setProperty('--bg', bg);
+          b.setAttribute('aria-label', 'Image option ' + (i + 1));
+          b.addEventListener('click', () => {
+            strip.querySelectorAll('.cp-banner-thumb').forEach(x => x.classList.remove('sel'));
+            b.classList.add('sel');
+            if (preview) preview.style.setProperty('--bg', bg);
+          });
+          strip.insertBefore(b, upload);
+        });
+        if (preview) preview.style.setProperty('--bg', set[0]);
+      }
+      app.querySelectorAll('.cp-cat-chip').forEach(c => c.addEventListener('click', () => {
+        const scope = c.closest('.cp-draft') || app;
+        scope.querySelectorAll('.cp-cat-chip').forEach(x => x.classList.remove('sel'));
+        c.classList.add('sel');
+        setBannerSet(scope, c.dataset.cat);
+        setCategoryCopy(scope, c.dataset.cat);
+      }));
+      app.querySelectorAll('.cp-draft').forEach(scope => {
+        setBannerSet(scope, 'Collaboration');
+        setCategoryCopy(scope, 'Collaboration');
+        const recText = scope.querySelector('.cp-rec-text-field');
+        if (recText) recText.addEventListener('input', () => updateChars(scope));
+        updateChars(scope);
+      });
+    })();
+  </script>
+</body>
+</html>
