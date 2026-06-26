@@ -1149,55 +1149,12 @@
 
         <!-- Outlook -->
         <div class="proto-panel" data-panel="outlook">
-          <div class="pf">
-            <div class="pf-chrome"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="pf-name">Outlook — Inbox</span></div>
-            <div class="pf-canvas">
-              <div class="banner-tip">💡 <div class="grow">This thread wrapped up the <strong>Spring Launch</strong> project. Recognize a teammate who made it happen?</div><button class="pbtn pbtn-primary" type="button">Recognize</button></div>
-              <div class="pcard" style="margin-top:16px">
-                <div class="row top"><div class="av" style="--c:#2563eb">MC</div><div class="grow"><div class="row" style="justify-content:space-between"><div class="name">Maya Chen</div><div class="sub">Today, 9:42 AM</div></div><div class="sub">Re: Spring Launch — we’re live 🚀</div></div></div>
-                <div class="muted" style="margin-top:12px">Huge thanks to everyone. The handoff and final QA came together fast — really proud of how the team rallied this week.</div>
-              </div>
-              <div class="pcard" style="margin-top:16px; border-color: color-mix(in srgb, var(--proto-accent) 30%, #fff)">
-                <div class="pf-h">Quick recognition</div>
-                <div class="field">To <strong style="color:var(--ink)">Maya Chen</strong></div>
-                <div class="row" style="margin:10px 0"><span class="pchip">Impact</span><span class="tag">Teamwork</span><span class="tag">Craft</span></div>
-                <div class="textarea">Maya, your design handoff kept the whole launch on track — thank you for unblocking engineering twice this week.</div>
-                <div class="row" style="margin-top:12px; justify-content:flex-end"><button class="pbtn" type="button">✨ Improve draft</button><button class="pbtn pbtn-primary" type="button">Send recognition</button></div>
-              </div>
-            </div>
-          </div>
+          <iframe id="olFrame" class="cp-frame" data-src="outlook-recognition-prototype.html" title="Outlook — Recognition workflow"></iframe>
         </div>
 
         <!-- Teams App -->
         <div class="proto-panel" data-panel="teams">
-          <div class="pf">
-            <div class="pf-chrome"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="pf-name">Microsoft Teams — Recognition</span></div>
-            <div class="teams-shell">
-              <div class="app-rail">
-                <div class="app-ic" style="background:#6264a7">T</div>
-                <div class="app-ic" style="background:#7b83eb">💬</div>
-                <div class="app-ic" style="background:#0f766e">🏆</div>
-                <div class="app-ic" style="background:#b45309">📅</div>
-              </div>
-              <div class="pf-canvas pf-split s5050">
-                <section>
-                  <div class="pf-h">New recognition</div>
-                  <div class="field">To <strong style="color:var(--ink)">Maya Chen</strong> · Product Designer</div>
-                  <div class="pf-h" style="margin:16px 0 8px">Category</div>
-                  <div class="row" style="flex-wrap:wrap"><span class="pchip">Impact</span><span class="tag">Teamwork</span><span class="tag">Innovation</span><span class="tag">Leadership</span></div>
-                  <div class="pf-h" style="margin:16px 0 8px">Message <span style="color:var(--proto-accent)">✨ AI draft</span></div>
-                  <div class="textarea">Maya, your design handoff on Spring Launch kept us on schedule and you unblocked engineering twice. Thank you for raising the bar on craft and collaboration.</div>
-                  <div class="toolbar" style="margin-top:12px"><button class="pbtn" type="button">✨ Improve</button><button class="pbtn" type="button">Summarize impact</button><button class="pbtn" type="button">Adjust tone</button></div>
-                  <div class="row" style="margin-top:16px; justify-content:flex-end"><button class="pbtn" type="button">Save draft</button><button class="pbtn pbtn-primary" type="button">Submit recognition</button></div>
-                </section>
-                <aside>
-                  <div class="pf-h">Recognition feed</div>
-                  <div class="pcard"><div class="row top"><div class="av sm" style="--c:#0f766e">DS</div><div class="grow"><div class="name">Diego → Priya</div><div class="muted" style="margin-top:4px">“Saved the launch dashboard at the last minute.”</div><div class="reactions" style="margin-top:10px"><span class="react">👏 18</span><span class="react">🎉 9</span></div></div></div></div>
-                  <div class="pcard"><div class="row top"><div class="av sm" style="--c:#b45309">SL</div><div class="grow"><div class="name">Sam → Maya</div><div class="muted" style="margin-top:4px">“Thanks for the clean handoff — made my week.”</div><div class="reactions" style="margin-top:10px"><span class="react">❤️ 24</span><span class="react">👏 12</span></div></div></div></div>
-                </aside>
-              </div>
-            </div>
-          </div>
+          <iframe id="tmFrame" class="cp-frame" data-src="teams-recognition-prototype.html" title="Microsoft Teams — Recognition workflow"></iframe>
         </div>
 
         <!-- Viva Engage -->
@@ -1308,13 +1265,14 @@
   </script>
 
   <script>
-    // Lazy-load the standalone Copilot recognition prototype into the Cowork panel
+    // Lazy-load standalone prototypes into their touchpoint panels (fresh copy each open)
     (function () {
-      const frame = document.getElementById('cpFrame');
-      const pill = document.querySelector('.tp-pill[data-tp="cowork"]');
-      if (!frame || !pill) return;
-      // (Re)load a fresh copy each time the Cowork touchpoint is opened
-      pill.addEventListener('click', () => { frame.src = frame.dataset.src; });
+      [['cpFrame', 'cowork'], ['olFrame', 'outlook'], ['tmFrame', 'teams']].forEach(([id, tp]) => {
+        const frame = document.getElementById(id);
+        const pill = document.querySelector('.tp-pill[data-tp="' + tp + '"]');
+        if (!frame || !pill) return;
+        pill.addEventListener('click', () => { frame.src = frame.dataset.src; });
+      });
     })();
   </script>
 

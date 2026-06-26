@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Microsoft Teams — Recognition workflow</title>
+  <style>
+    * { box-sizing: border-box; }
+    html, body { margin: 0; }
+    body { font-family: "Segoe UI", Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif; background: #fff; color: #242424; }
+    button, select, textarea, input { font: inherit; }
+
+    .tm-app {
+      --fg: #242424; --fg2: #616161; --line: #e6e6e6; --hover: #f5f5f5; --sel: #ebebfb;
+      --brand: #5b5fc7; --brand-press: #4f52b2; --radius: 12px;
+      display: grid; grid-template-columns: 68px 280px minmax(0, 1fr);
+      height: 720px; background: #f5f5f5; color: var(--fg);
+      border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden;
+      box-shadow: 0 10px 30px rgba(31, 41, 55, .08);
+    }
+    .tm-i { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+
+    /* app rail */
+    .tm-rail { background: #ebebf5; display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 10px 0; }
+    .tm-railbtn { width: 52px; height: 52px; border: 0; background: transparent; color: #444; border-radius: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; font-size: 9.5px; cursor: pointer; }
+    .tm-railbtn:hover { background: #e1e1f0; }
+    .tm-railbtn.sel { background: #fff; color: var(--brand); font-weight: 600; }
+    .tm-railbtn.sel::before { content: ""; position: absolute; left: 4px; width: 3px; height: 26px; border-radius: 3px; background: var(--brand); transform: translateX(-8px); }
+    .tm-rail { position: relative; }
+    .tm-railbtn { position: relative; }
+    .tm-avatar { margin-top: auto; width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, #6b46c1, #5b5fc7); color: #fff; display: grid; place-items: center; font-size: 12px; font-weight: 700; }
+
+    /* channel list */
+    .tm-list { background: #fff; border-right: 1px solid var(--line); overflow: auto; }
+    .tm-list-head { padding: 16px 16px 8px; font-size: 18px; font-weight: 700; display: flex; align-items: center; justify-content: space-between; }
+    .tm-team { padding: 8px 14px; }
+    .tm-team-name { display: flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 700; padding: 8px 6px; }
+    .tm-team-logo { width: 32px; height: 32px; border-radius: 8px; background: linear-gradient(135deg, #5b5fc7, #6b46c1); color: #fff; display: grid; place-items: center; font-size: 13px; font-weight: 800; flex: none; }
+    .tm-chan { display: flex; align-items: center; gap: 8px; padding: 7px 10px 7px 28px; border-radius: 8px; font-size: 13px; color: var(--fg); cursor: pointer; }
+    .tm-chan:hover { background: var(--hover); }
+    .tm-chan.sel { background: var(--sel); font-weight: 700; }
+    .tm-chan .hash { color: var(--fg2); }
+
+    /* main */
+    .tm-main { background: #fff; display: flex; flex-direction: column; min-height: 0; }
+    .tm-head { height: 56px; flex: none; border-bottom: 1px solid var(--line); display: flex; align-items: center; gap: 10px; padding: 0 22px; font-size: 16px; font-weight: 700; }
+    .tm-head .sub { font-size: 12px; font-weight: 500; color: var(--fg2); }
+    .tm-screen { display: none; flex: 1; min-height: 0; overflow: auto; }
+    .tm-screen.is-active { display: block; animation: tmIn .25s ease; }
+    @keyframes tmIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+    .tm-body { padding: 22px 26px; }
+
+    .btn { border: 1px solid var(--line); background: #fff; color: var(--fg); border-radius: var(--radius); padding: 9px 16px; font-size: 13px; font-weight: 600; cursor: pointer; }
+    .btn:hover { background: var(--hover); }
+    .btn-primary { border: 0; background: var(--brand); color: #fff; }
+    .btn-primary:hover { background: var(--brand-press); }
+
+    /* chat messages */
+    .msg { display: flex; gap: 12px; margin-bottom: 18px; }
+    .msg .av { width: 36px; height: 36px; border-radius: 50%; flex: none; display: grid; place-items: center; color: #fff; font-weight: 700; font-size: 12px; background: var(--c, #5b5fc7); }
+    .msg .who { font-weight: 700; font-size: 13px; }
+    .msg .when { font-size: 11px; color: var(--fg2); margin-left: 8px; font-weight: 400; }
+    .msg .text { font-size: 13.5px; line-height: 1.5; margin-top: 2px; }
+
+    .suggest { display: flex; align-items: center; gap: 14px; padding: 14px 16px; border-radius: var(--radius); border: 1px solid color-mix(in srgb, var(--brand) 28%, #fff); background: linear-gradient(135deg, color-mix(in srgb, var(--brand) 8%, #fff), #fff); margin-bottom: 18px; }
+    .suggest .spark { width: 30px; height: 30px; border-radius: 8px; flex: none; background: conic-gradient(from 210deg at 50% 50%, #2aa5f3, #6c4cf1, #d24fd6, #2aa5f3); }
+    .suggest .txt { flex: 1; }
+    .suggest .txt b { font-size: 13.5px; }
+    .suggest .txt p { margin: 3px 0 0; font-size: 12.5px; color: var(--fg2); }
+
+    /* recognition adaptive card */
+    .reccard { border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; max-width: 460px; box-shadow: 0 2px 8px rgba(0,0,0,.06); }
+    .reccard .banner { height: 96px; background: var(--bg, linear-gradient(135deg,#6b46c1,#5b5fc7)); display: flex; align-items: flex-end; padding: 12px 16px; }
+    .reccard .badge { background: rgba(255,255,255,.92); color: var(--brand-press); border-radius: 999px; padding: 4px 11px; font-size: 11px; font-weight: 800; }
+    .reccard .body { padding: 16px; }
+    .reccard .rhead { display: flex; align-items: center; gap: 10px; }
+    .reccard .rav { width: 40px; height: 40px; border-radius: 50%; background: #d83b01; color: #fff; display: grid; place-items: center; font-weight: 700; flex: none; }
+    .reccard .rtitle { font-size: 15px; font-weight: 800; }
+    .reccard .rmeta { font-size: 12px; color: var(--fg2); }
+    .reccard .rtext { font-size: 13.5px; line-height: 1.55; margin-top: 12px; color: #333; }
+    .reccard .rpts { display: inline-block; margin-top: 12px; background: linear-gradient(135deg, #6b46c1, #5b5fc7); color: #fff; border-radius: 999px; padding: 5px 14px; font-size: 13px; font-weight: 800; }
+    .reactions { display: flex; gap: 8px; margin-top: 14px; flex-wrap: wrap; }
+    .react { border: 1px solid var(--line); border-radius: 999px; padding: 4px 11px; font-size: 12px; font-weight: 700; background: #fff; cursor: pointer; }
+    .react:hover { background: var(--hover); }
+    .backend { margin-top: 12px; font-size: 11px; color: #8a8a8a; }
+    .toast { display: inline-flex; align-items: center; gap: 8px; background: #dff6e6; color: #0e7a3b; border-radius: var(--radius); padding: 10px 14px; font-size: 13px; font-weight: 600; margin-bottom: 18px; }
+
+    /* draft form */
+    .draft { max-width: 640px; }
+    .draft-sub { font-size: 13px; color: var(--fg2); margin-bottom: 16px; }
+    .frow { margin-top: 20px; }
+    .flabel { font-size: 11px; font-weight: 700; color: var(--fg2); text-transform: uppercase; letter-spacing: .03em; margin-bottom: 8px; }
+    .to-field { display: flex; align-items: center; gap: 8px; border: 1px solid var(--line); border-radius: var(--radius); padding: 8px 12px; font-size: 13px; }
+    .to-av { width: 24px; height: 24px; border-radius: 50%; background: #d83b01; color: #fff; display: grid; place-items: center; font-size: 11px; font-weight: 700; }
+    .chips { display: flex; flex-wrap: wrap; gap: 10px; }
+    .chip { display: inline-flex; align-items: center; gap: 7px; border: 1px solid var(--line); background: #fff; border-radius: 999px; padding: 7px 13px; font-size: 13px; font-weight: 600; color: var(--fg); cursor: pointer; }
+    .chip:hover { background: var(--hover); }
+    .chip.sel { border-color: var(--brand); background: var(--sel); color: var(--brand-press); }
+    .chip .sug { font-size: 12px; font-weight: 500; opacity: .6; }
+    .banner-prev { height: 110px; border-radius: var(--radius); background: var(--bg, linear-gradient(135deg, #6b46c1, #5b5fc7)); border: 1px solid var(--line); }
+    .banner-strip { display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap; }
+    .thumb { width: 60px; height: 42px; border-radius: var(--radius); background: var(--bg); border: 2px solid transparent; cursor: pointer; padding: 0; }
+    .thumb.sel { border-color: var(--brand); box-shadow: 0 0 0 2px color-mix(in srgb, var(--brand) 25%, #fff); }
+    .upload { width: 60px; height: 42px; border-radius: var(--radius); border: 1.5px dashed var(--line); background: #fafafa; color: var(--fg2); font-size: 10px; font-weight: 600; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+    .upload:hover { background: var(--hover); }
+    .rt { border: 1px solid var(--line); border-radius: var(--radius); padding: 12px 14px; font-size: 14px; line-height: 1.55; outline: none; }
+    .rt:focus { border-color: var(--brand); box-shadow: 0 0 0 2px color-mix(in srgb, var(--brand) 18%, #fff); }
+    .rt-wrap { border: 1px solid var(--line); border-radius: var(--radius); }
+    .rt-wrap:focus-within { border-color: var(--brand); box-shadow: 0 0 0 2px color-mix(in srgb, var(--brand) 18%, #fff); }
+    .rt-wrap .rt { border: 0; }
+    .rt-wrap .rt:focus { box-shadow: none; }
+    .rt-foot { display: flex; align-items: center; justify-content: space-between; padding: 6px 14px 10px; }
+    .rt-foot .cnt { font-size: 11.5px; color: var(--fg2); }
+    .proof { display: inline-flex; align-items: center; gap: 6px; border: 0; background: transparent; color: var(--brand); font-size: 12.5px; font-weight: 600; cursor: pointer; padding: 0; }
+    .proof svg { width: 15px; height: 15px; }
+    .radio-col { display: flex; flex-direction: column; gap: 10px; }
+    .radio { display: flex; gap: 8px; font-size: 13px; cursor: pointer; }
+    .radio input { accent-color: var(--brand); margin-top: 2px; }
+    .pts-bal { font-size: 12.5px; color: var(--fg2); margin-bottom: 8px; }
+    .pts-bal a { color: var(--brand); text-decoration: none; font-weight: 600; }
+    .pts-select { width: 100%; max-width: 280px; border: 1px solid var(--line); border-radius: var(--radius); padding: 9px 12px; font-size: 14px; background: #fff; cursor: pointer; }
+    .actions { display: flex; gap: 10px; margin-top: 30px; }
+  </style>
+</head>
+<body>
+  <div class="tm-app" id="tmApp" data-screen="channel">
+    <nav class="tm-rail">
+      <button class="tm-railbtn" type="button"><svg class="tm-i" viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>Activity</button>
+      <button class="tm-railbtn" type="button"><svg class="tm-i" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Chat</button>
+      <button class="tm-railbtn" type="button"><svg class="tm-i" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/></svg>Teams</button>
+      <button class="tm-railbtn" type="button"><svg class="tm-i" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>Calendar</button>
+      <button class="tm-railbtn sel" type="button"><svg class="tm-i" viewBox="0 0 24 24"><path d="M6 9H4a2 2 0 0 1-2-2V5h4M18 9h2a2 2 0 0 0 2-2V5h-4M6 5h12v4a6 6 0 0 1-12 0z"/><path d="M9 21h6M10 17v4M14 17v4"/></svg>Praise</button>
+      <div class="tm-avatar">XP</div>
+    </nav>
+
+    <div class="tm-list">
+      <div class="tm-list-head">Teams</div>
+      <div class="tm-team">
+        <div class="tm-team-name"><span class="tm-team-logo">PV</span>Project Voyager</div>
+        <div class="tm-chan sel"><span class="hash">#</span> General</div>
+        <div class="tm-chan"><span class="hash">#</span> Design</div>
+        <div class="tm-chan"><span class="hash">#</span> Launch</div>
+      </div>
+    </div>
+
+    <div class="tm-main">
+      <div class="tm-head">Project Voyager <span class="sub">› General</span></div>
+
+      <!-- CHANNEL (before) -->
+      <section class="tm-screen is-active" data-screen="channel">
+        <div class="tm-body">
+          <div class="msg"><div class="av" style="--c:#8b5cf6">JR</div><div><div class="who">Jamie Rivera <span class="when">9:42 AM</span></div><div class="text">We're live 🚀 Huge thanks to everyone who made Project Voyager happen!</div></div></div>
+          <div class="msg"><div class="av" style="--c:#0f9d58">PN</div><div><div class="who">Priya Nair <span class="when">9:51 AM</span></div><div class="text">Amazing work team 🎉</div></div></div>
+
+          <div class="suggest">
+            <span class="spark" aria-hidden="true"></span>
+            <div class="txt">
+              <b>Copilot suggests recognizing Jamie.</b>
+              <p>She led UX strategy and unblocked the team across Project Voyager.</p>
+            </div>
+            <button class="btn btn-primary" type="button" data-go="compose">Praise Jamie</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- COMPOSE -->
+      <section class="tm-screen" data-screen="compose">
+        <div class="tm-body draft">
+          <div class="draft-sub">Copilot drafted this recognition from your Project Voyager collaboration — edit anything before posting.</div>
+
+          <div class="frow">
+            <div class="flabel">To</div>
+            <div class="to-field"><span class="to-av">JR</span><strong>Jamie Rivera</strong> · Product Designer</div>
+          </div>
+          <div class="frow">
+            <div class="flabel">Recognition category</div>
+            <div class="chips">
+              <button class="chip sel" type="button">Collaboration <span class="sug">(suggested)</span></button>
+              <button class="chip" type="button">Leadership</button>
+              <button class="chip" type="button">Impact</button>
+              <button class="chip" type="button">Innovation</button>
+              <button class="chip" type="button">Mentorship</button>
+            </div>
+          </div>
+          <div class="frow">
+            <div class="flabel">Banner image</div>
+            <div class="banner-prev" id="tmBanner" style="--bg:linear-gradient(135deg,#6b46c1,#5b5fc7)"></div>
+            <div class="banner-strip">
+              <button class="thumb sel" type="button" style="--bg:linear-gradient(135deg,#6b46c1,#5b5fc7)"></button>
+              <button class="thumb" type="button" style="--bg:linear-gradient(135deg,#0f9d58,#33c481)"></button>
+              <button class="thumb" type="button" style="--bg:linear-gradient(135deg,#d83b01,#f7a440)"></button>
+              <button class="thumb" type="button" style="--bg:linear-gradient(135deg,#0078d4,#34d3eb)"></button>
+              <button class="upload" type="button"><span style="font-size:15px">＋</span>Upload</button>
+            </div>
+          </div>
+          <div class="frow">
+            <div class="flabel">Title</div>
+            <div class="rt" contenteditable="true">Exceptional collaboration on Project Voyager</div>
+          </div>
+          <div class="frow">
+            <div class="flabel">Recognition</div>
+            <div class="rt-wrap">
+              <div class="rt" id="tmRec" contenteditable="true">Jamie played a critical role in helping the team successfully deliver Project Voyager. Her thoughtful design feedback, cross-team collaboration, and leadership significantly improved the final experience.</div>
+              <div class="rt-foot">
+                <span class="cnt" id="tmCnt">0/500 character limit</span>
+                <button class="proof" type="button"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l1.5 4.5L18 8l-4.5 1.5L12 14l-1.5-4.5L6 8z"/><path d="M18.5 13l.9 2.6L22 16.5l-2.6.9L18.5 20l-.9-2.6L15 16.5z"/></svg>proofwriting</button>
+              </div>
+            </div>
+          </div>
+          <div class="frow">
+            <div class="flabel">Points</div>
+            <div class="pts-bal">You have <strong>1,250</strong> points available · <a href="#">View points details ↗</a></div>
+            <select class="pts-select">
+              <option>+200 points (AI suggested)</option>
+              <option>+100 points</option>
+              <option>+300 points</option>
+              <option>+500 points</option>
+            </select>
+          </div>
+          <div class="frow">
+            <div class="flabel">Visibility</div>
+            <div class="radio-col">
+              <label class="radio"><input type="radio" name="tmvis" checked> Post to #General — visible to the team</label>
+              <label class="radio"><input type="radio" name="tmvis"> Private — sent only to the recipient</label>
+            </div>
+          </div>
+          <div class="actions">
+            <button class="btn btn-primary" type="button" data-go="posted">Post recognition</button>
+            <button class="btn" type="button" data-go="channel">Cancel</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- POSTED (celebration) -->
+      <section class="tm-screen" data-screen="posted">
+        <div class="tm-body">
+          <div class="toast">✓ Recognition posted to #General · +200 points to Jamie</div>
+
+          <div class="msg">
+            <div class="av" style="--c:#5b5fc7">XP</div>
+            <div style="flex:1">
+              <div class="who">Xinjia Pang <span class="when">recognized Jamie Rivera · just now</span></div>
+              <div class="reccard" style="margin-top:8px">
+                <div class="banner" style="--bg:linear-gradient(135deg,#6b46c1,#5b5fc7)"><span class="badge">🏆 Collaboration</span></div>
+                <div class="body">
+                  <div class="rhead"><span class="rav">JR</span><div><div class="rtitle">Exceptional collaboration on Project Voyager</div><div class="rmeta">Jamie Rivera · Product Designer</div></div></div>
+                  <div class="rtext">Jamie played a critical role in helping the team successfully deliver Project Voyager. Her thoughtful design feedback, cross-team collaboration, and leadership significantly improved the final experience.</div>
+                  <span class="rpts">+200 points</span>
+                  <div class="backend">Recognition record, points &amp; fulfillment by <strong>Workhuman</strong></div>
+                </div>
+              </div>
+              <div class="reactions">
+                <span class="react">👏 12</span><span class="react">❤️ 8</span><span class="react">🎉 5</span><span class="react">＋</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="msg"><div class="av" style="--c:#0f9d58">PN</div><div><div class="who">Priya Nair <span class="when">just now</span></div><div class="text">So well deserved 🙌 congrats Jamie!</div></div></div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      const app = document.getElementById('tmApp');
+      if (!app) return;
+      const screens = app.querySelectorAll('.tm-screen');
+      function show(name) { app.dataset.screen = name; screens.forEach(s => s.classList.toggle('is-active', s.dataset.screen === name)); }
+      app.querySelectorAll('[data-go]').forEach(b => b.addEventListener('click', () => show(b.dataset.go)));
+
+      app.querySelectorAll('.chip').forEach(c => c.addEventListener('click', () => {
+        app.querySelectorAll('.chip').forEach(x => x.classList.remove('sel'));
+        c.classList.add('sel');
+      }));
+      app.querySelectorAll('.thumb').forEach(t => t.addEventListener('click', () => {
+        app.querySelectorAll('.thumb').forEach(x => x.classList.remove('sel'));
+        t.classList.add('sel');
+        const prev = app.querySelector('#tmBanner');
+        if (prev) prev.style.setProperty('--bg', t.style.getPropertyValue('--bg'));
+      }));
+      const rec = app.querySelector('#tmRec'), cnt = app.querySelector('#tmCnt');
+      function upd() { if (rec && cnt) cnt.textContent = rec.textContent.trim().length + '/500 character limit'; }
+      if (rec) rec.addEventListener('input', upd); upd();
+    })();
+  </script>
+</body>
+</html>
