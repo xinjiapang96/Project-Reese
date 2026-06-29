@@ -51,7 +51,7 @@
     .ol-search { flex: 1; max-width: 520px; height: 32px; border-radius: 8px; background: #f3f2f1; padding: 0 12px; display: flex; align-items: center; gap: 8px; color: var(--fg2); font-size: 13px; }
     .ol-me { margin-left: auto; width: 30px; height: 30px; border-radius: 50%; background: linear-gradient(135deg, #6b46c1, #0f6cbd); color: #fff; display: grid; place-items: center; font-size: 12px; font-weight: 700; }
 
-    .ol-main { display: grid; grid-template-columns: 30% minmax(0, 1fr); min-height: 0; }
+    .ol-main { display: grid; grid-template-columns: 30% minmax(0, 1fr); min-height: 0; overflow: hidden; position: relative; }
     .ol-list { border-right: 1px solid var(--line); background: #fff; overflow: auto; }
     .ol-list-head { padding: 14px 16px 8px; font-size: 15px; font-weight: 700; }
     .ol-mail { padding: 12px 16px; border-bottom: 1px solid #f1f1f1; cursor: pointer; border-left: 3px solid transparent; }
@@ -61,7 +61,7 @@
     .ol-mail .top { display: flex; align-items: center; gap: 8px; }
     .ol-mail .from { font-weight: 700; font-size: 13px; }
     .ol-mail .when { margin-left: auto; font-size: 11px; color: var(--fg2); }
-    .ol-mail .subj { font-size: 13px; margin-top: 3px; font-weight: 600; }
+    .ol-mail .subj { font-size: 13px; margin-top: 3px; font-weight: 400; }
     .ol-mail.is-unread .subj { font-weight: 700; }
     .ol-mail:not(.is-unread) .ol-dot { display: none; }
     .ol-mail .prev { font-size: 12px; color: var(--fg2); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -87,6 +87,30 @@
     .callout-body p { margin: 0 0 12px; font-size: 14px; line-height: 1.65; color: #333; }
     .callout-body p:last-child { margin-bottom: 0; }
     .callout-body strong { color: #1f2330; }
+    /* received recognition (recipient view) */
+    .received-card { border: 1px solid var(--line); border-radius: var(--radius); padding: 22px 24px; margin-top: 18px; background: #fff; box-shadow: 0 1px 2px rgba(0,0,0,.05); }
+    .received-from { font-size: 14px; color: var(--fg2); margin-bottom: 16px; }
+    .received-from strong { color: var(--fg); }
+    .received-title { font-size: 20px; font-weight: 800; margin-top: 16px; line-height: 1.3; }
+    .received-message { font-size: 14px; line-height: 1.6; color: #333; margin-top: 10px; }
+    .received-points { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-top: 18px; padding: 14px 16px; border-radius: var(--radius); background: linear-gradient(135deg, color-mix(in srgb, var(--brand) 8%, #fff), #fff); border: 1px solid color-mix(in srgb, var(--brand) 22%, #fff); }
+    .received-points-main { display: flex; align-items: baseline; gap: 6px; }
+    .received-points-value { font-size: 26px; font-weight: 800; color: var(--brand-press); }
+    .received-points-unit { font-size: 13px; font-weight: 700; color: var(--fg2); }
+    .received-redeem { color: var(--brand); font-weight: 600; font-size: 13.5px; text-decoration: none; }
+    .received-redeem:hover { text-decoration: underline; }
+    .received-visibility { margin-top: 18px; }
+    .comments { margin-top: 26px; }
+    .comments-title { font-size: 15px; font-weight: 700; margin-bottom: 14px; }
+    .comment-list { display: flex; flex-direction: column; gap: 14px; }
+    .comment { display: flex; gap: 10px; }
+    .comment-avatar { width: 32px; height: 32px; border-radius: 50%; flex: none; display: grid; place-items: center; color: #fff; font-size: 12px; font-weight: 700; background: var(--c, #0f6cbd); }
+    .comment-name { font-size: 13px; font-weight: 700; }
+    .comment-text { font-size: 13.5px; line-height: 1.5; color: #333; margin-top: 2px; }
+    .comment-compose { display: flex; gap: 10px; margin-top: 16px; align-items: flex-end; }
+    .comment-compose textarea { flex: 1; min-height: 44px; max-height: 120px; border: 1px solid var(--line); border-radius: var(--radius); padding: 10px 12px; font: inherit; font-size: 14px; resize: vertical; }
+    .comment-compose textarea:focus { outline: none; border-color: var(--brand); }
+
     .email-footer { margin-top: 34px; padding-top: 24px; border-top: 1px solid var(--line); color: #242424; }
     .email-footer-links { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; font-size: 14px; }
     .email-footer a { color: #0067b8; text-decoration: underline; }
@@ -105,6 +129,8 @@
     .confirm-check { width: 36px; height: 36px; border-radius: 50%; background: #dff6e6; color: #0e7a3b; display: grid; place-items: center; font-size: 18px; font-weight: 900; flex: none; }
     .confirm-title { font-size: 16px; font-weight: 700; }
     .confirm-sub { font-size: 13.5px; line-height: 1.6; color: #3a3a3a; margin-top: 12px; }
+    .confirm-link { display: inline-block; margin-top: 14px; color: var(--brand); font-weight: 600; font-size: 13.5px; text-decoration: none; }
+    .confirm-link:hover { text-decoration: underline; }
     .link-btn { background: none; border: 0; color: var(--brand); font-size: 13px; font-weight: 600; cursor: pointer; padding: 0; margin-top: 12px; display: inline-flex; align-items: center; gap: 6px; }
     .link-btn:hover { text-decoration: underline; }
 
@@ -233,7 +259,14 @@
     .review-card.is-readonly select:disabled { border: 0; padding-left: 0; background: transparent; color: var(--fg); opacity: 1; -webkit-text-fill-color: var(--fg); appearance: none; }
     .review-card.is-readonly input:disabled { opacity: 1; }
     .review-card.is-readonly .setting-card { border: 0; padding: 0; background: transparent; }
-    .review-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 32px; }
+    /* option 2 (read-only): make Points / Visibility values prominent */
+    .review-card.is-readonly .setting-card .flabel { margin-bottom: 6px; }
+    .review-card.is-readonly .setting-card select:disabled { font-size: 15px; font-weight: 700; }
+    .review-card.is-readonly .setting-helper { display: none; }
+    .review-card.is-readonly .visibility .radio { font-size: 15px; font-weight: 700; color: var(--fg); }
+    .review-card.is-readonly .visibility .radio input { display: none; }
+    .review-card.is-readonly .visibility .radio:not(:has(input:checked)) { display: none; }
+    .review-actions { display: flex; justify-content: flex-start; gap: 10px; margin-top: 32px; }
     .agent-followup { max-width: 620px; margin: 18px auto 36px; padding: 18px 20px; border: 1px solid var(--line); border-radius: var(--radius); background: #fafafa; }
     .agent-followup-title { font-size: 15px; font-weight: 700; }
     .agent-followup-copy { margin-top: 6px; font-size: 13.5px; line-height: 1.55; color: var(--fg2); }
@@ -241,6 +274,60 @@
     .btn-agent { border: 0; color: #fff; background: linear-gradient(135deg, #0f6cbd, #6c4cf1 58%, #d24fd6); box-shadow: 0 8px 20px rgba(15, 108, 189, .22); }
     .btn-agent:hover { background: linear-gradient(135deg, #0c5aa6, #5a3ddb 58%, #b93fbe); box-shadow: 0 10px 24px rgba(15, 108, 189, .28); }
 
+    /* Copilot entry logo on the launch email */
+    .ol-read-inner { position: relative; }
+    .cp-launch-logo { position: absolute; top: 16px; right: 8px; width: 24px; height: 24px; border: 0; cursor: pointer; background: url("Copilot.png") center / contain no-repeat; }
+    .cp-launch-logo:hover { filter: brightness(1.05); }
+    .cp-rec-launch-logo { position: absolute; top: 16px; right: 40px; width: 24px; height: 24px; border: 0; cursor: pointer; border-radius: 7px; background: conic-gradient(from 210deg at 50% 50%, #2aa5f3, #6c4cf1, #d24fd6, #2aa5f3); }
+    .cp-rec-launch-logo:hover { filter: brightness(1.05); }
+    .rec-panel-card { box-shadow: none; max-width: none; margin: 0; border: 0; flex: none; }
+    .rec-panel-card .review-card-inner { padding: 18px; }
+    .rec-confirm { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 10px; padding: 24px; }
+    .rec-confirm[hidden] { display: none; }
+    .rec-confirm-check { width: 52px; height: 52px; border-radius: 50%; background: #dff6e6; color: #0e7a3b; display: grid; place-items: center; font-size: 26px; font-weight: 900; }
+    .rec-confirm-title { font-size: 18px; font-weight: 700; }
+    .rec-confirm-sub { font-size: 13.5px; line-height: 1.55; color: var(--fg2); max-width: 280px; }
+    .rec-confirm .btn { margin-top: 14px; }
+    .rec-confirm-link { color: var(--brand); font-weight: 600; font-size: 13.5px; text-decoration: none; }
+    .rec-confirm-link:hover { text-decoration: underline; }
+
+    /* Copilot side panel */
+    .cp-panel { position: absolute; top: 0; right: 0; bottom: 0; width: 400px; max-width: 92%; max-height: 100%; background: #fff; border-left: 1px solid var(--line); box-shadow: -12px 0 32px rgba(0,0,0,.12); display: flex; flex-direction: column; z-index: 30; overflow: hidden; }
+    .cp-panel[hidden] { display: none; }
+    .cp-panel-top { display: flex; align-items: center; gap: 12px; padding: 14px 16px; flex: none; }
+    .cp-panel-menu, .cp-panel-x { border: 0; background: transparent; font-size: 18px; line-height: 1; color: var(--fg); cursor: pointer; width: 32px; height: 32px; border-radius: 8px; display: grid; place-items: center; }
+    .cp-panel-menu:hover, .cp-panel-x:hover { background: var(--hover); }
+    .cp-panel-title { font-size: 17px; font-weight: 700; }
+    .cp-panel-x { margin-left: auto; }
+    .cp-panel-body { flex: 1; overflow: auto; padding: 22px 18px; display: flex; flex-direction: column; justify-content: flex-start; gap: 18px; }
+    .cp-panel-body[hidden] { display: none; }
+    .cp-panel-composer { border: 1px solid var(--line); border-radius: 18px; padding: 16px 18px; box-shadow: 0 1px 3px rgba(0,0,0,.05); background: #fafafa; }
+    .cp-panel-input { font-size: 14px; color: var(--fg2); }
+    .cp-panel-plus { display: inline-block; margin-top: 14px; font-size: 20px; color: var(--fg2); line-height: 1; }
+    .cp-panel-cards, .cp-rec-panel-cards { display: flex; flex-direction: column; gap: 12px; }
+    .cp-panel-card { text-align: left; border: 0; background: #f3f3f3; border-radius: 12px; padding: 16px 18px; font-size: 15px; color: var(--fg); cursor: pointer; }
+    .cp-panel-card:hover { background: #ececec; }
+    .cp-panel-gallery { align-self: flex-end; color: var(--brand); font-weight: 600; font-size: 13.5px; }
+    .cp-agent-hero { text-align: center; }
+    .cp-agent-logo { width: 40px; height: 40px; border-radius: 12px; display: inline-block; background: conic-gradient(from 210deg at 50% 50%, #2aa5f3, #6c4cf1, #d24fd6, #2aa5f3); }
+    .cp-agent-hero-title { font-size: 19px; font-weight: 600; margin-top: 12px; }
+    .cp-rec-panel-card { display: flex; gap: 12px; align-items: flex-start; text-align: left; border: 1px solid var(--line); background: #fff; border-radius: 14px; padding: 15px 16px; cursor: pointer; }
+    .cp-rec-panel-card:hover { background: #fafafa; }
+    .cp-rec-panel-ic { font-size: 20px; line-height: 1.2; }
+    .cp-rec-panel-title { display: block; font-size: 15px; font-weight: 600; color: var(--fg); }
+    .cp-rec-panel-sub { display: block; font-size: 12.5px; color: var(--fg2); margin-top: 4px; line-height: 1.4; }
+
+    /* Copilot panel menu flyout */
+    .cp-menu-flyout { position: absolute; top: 58px; left: 0; right: 44px; bottom: 0; background: #fff; border-right: 1px solid var(--line); box-shadow: 10px 0 28px rgba(0,0,0,.12); overflow: auto; padding: 12px; z-index: 40; }
+    .cp-menu-flyout[hidden] { display: none; }
+    .cp-menu-item { display: flex; align-items: center; gap: 10px; width: 100%; text-align: left; border: 0; background: #e7eef7; border-radius: 10px; padding: 12px 14px; font-size: 15px; font-weight: 600; color: var(--fg); cursor: pointer; }
+    .cp-menu-label { display: flex; align-items: center; justify-content: space-between; font-size: 16px; font-weight: 700; margin: 18px 6px 8px; }
+    .cp-menu-agent { display: flex; align-items: center; gap: 12px; width: 100%; text-align: left; border: 0; background: transparent; border-radius: 10px; padding: 10px 14px; font-size: 15px; color: var(--fg); cursor: pointer; }
+    .cp-menu-agent:hover { background: var(--hover); }
+    .cp-magent-ic { width: 24px; height: 24px; border-radius: 7px; flex: none; background: #dcdcdc; }
+    .cp-magent-ic.recognition { background: conic-gradient(from 210deg at 50% 50%, #2aa5f3, #6c4cf1, #d24fd6, #2aa5f3); }
+    .cp-menu-convo { font-size: 14px; color: #444; padding: 9px 14px; border-radius: 8px; cursor: pointer; }
+    .cp-menu-convo:hover { background: var(--hover); }
   </style>
 </head>
 <body>
@@ -272,6 +359,16 @@
             <div class="subj">option 2</div>
             <div class="prev">Another recognition email option…</div>
           </div>
+          <div class="ol-mail is-unread" id="receivedMail" data-mail="received" hidden>
+            <div class="top"><span class="ol-dot"></span><span class="from">Microsoft Recognition</span><span class="when">10:12 AM</span></div>
+            <div class="subj">🎉 You've been recognized — Great Collaboration</div>
+            <div class="prev">Xinjia Pang recognized you and sent 100 points…</div>
+          </div>
+          <div class="ol-mail is-unread" id="launchMail" data-mail="launch">
+            <div class="top"><span class="ol-dot"></span><span class="from">Jamie Lee</span><span class="when">7:31 AM</span></div>
+            <div class="subj">Introducing Project Reeces — now live for everyone</div>
+            <div class="prev">We're excited to announce that Project Reeces is now…</div>
+          </div>
         </div>
 
         <div class="ol-read">
@@ -300,7 +397,9 @@
               </div>
               <div class="confirm-card" id="subNote" hidden style="margin-top:16px">
                 <div class="confirm-head"><span class="confirm-check">✓</span><div class="confirm-title">Recognition suggestions are turned on.</div></div>
-                <div class="confirm-sub">Copilot will send occasional recognition suggestions when it finds meaningful opportunities in your recent work. You'll always review and approve before anything is sent.</div>
+                <div class="confirm-sub">You'll receive occasional recognition suggestions when meaningful opportunities are found in your recent work. You'll always review and approve before anything is sent.</div>
+                <div class="confirm-sub">You'll get recommendations from Recognition <strong>weekly</strong>. To change how often you're notified or which recognition types are included, manage your preferences in the Recognition app in Teams.</div>
+                <a href="teams-recognition-prototype.html?pg=set" class="confirm-link">Manage in the Teams app ↗</a>
               </div>
 
               <div class="callout">
@@ -314,7 +413,7 @@
               </div>
               <footer class="email-footer">
                 <div class="email-footer-links">
-                  <a href="#">Unsubscribe</a><span>|</span><a href="#">Privacy Statement</a>
+                  <a href="teams-recognition-prototype.html?pg=set">Unsubscribe</a><span>|</span><a href="#">Privacy Statement</a>
                 </div>
                 <div class="email-footer-address">
                   <div>Microsoft Corporation</div>
@@ -378,20 +477,16 @@
                   </div>
 
                   <div class="review-section">
-                    <div class="rt" id="emailDraftTitle" contenteditable="true" role="textbox" aria-label="Recognition title">Thanks for helping Project Voyager move forward</div>
+                    <div class="rt" id="emailDraftTitle" contenteditable="true" role="textbox" aria-label="Recognition title">Thanks for helping Project Reeces move forward</div>
                   </div>
 
                   <div class="review-section">
-                    <textarea aria-label="Recognition message">Jamie, thank you for the care and leadership you brought to Project Voyager. Your thoughtful collaboration, fast follow-through, and ability to connect the team helped us deliver with confidence.</textarea>
+                    <textarea aria-label="Recognition message">Jamie, thank you for the care and leadership you brought to Project Reeces. Your thoughtful collaboration, fast follow-through, and ability to connect the team helped us deliver with confidence.</textarea>
                   </div>
 
                   <div class="review-section review-grid">
                     <div class="setting-card points">
                       <div class="flabel">Points</div>
-                      <div class="points-summary">
-                        <span class="points-value-inline">100</span>
-                        <span class="points-unit">points</span>
-                      </div>
                       <select aria-label="Points">
                         <option>50 points</option>
                         <option selected>100 points</option>
@@ -430,7 +525,120 @@
               </div>
               <footer class="email-footer">
                 <div class="email-footer-note">
-                  Don't want to receive recognition opportunity emails? <a href="#">Unsubscribe</a>
+                  Don't want to receive recognition opportunity emails? <a href="teams-recognition-prototype.html?pg=set">Unsubscribe</a>
+                </div>
+                <div class="email-footer-links" style="margin-top:10px">
+                  <a href="#">Privacy Statement</a>
+                </div>
+                <div class="email-footer-address">
+                  <div>Microsoft Corporation</div>
+                  <div>One Microsoft Way</div>
+                  <div>Redmond, WA 98052</div>
+                </div>
+                <div class="ms-footer-brand" aria-label="Microsoft">
+                  <span class="ms-mark" aria-hidden="true"><span></span><span></span><span></span><span></span></span>
+                  <span>Microsoft</span>
+                </div>
+              </footer>
+            </div>
+          </section>
+
+          <!-- SCREEN: received recognition (recipient view) -->
+          <section class="screen" data-screen="received">
+            <div class="ol-read-inner">
+              <div class="ol-read-subj">🎉 You've been recognized</div>
+              <div class="review-mail-meta">
+                <span class="ol-spark-av" aria-hidden="true"></span>
+                <div>
+                  <div class="ol-read-name">Microsoft Recognition</div>
+                  <div class="ol-read-to">To: You (Jamie Lee)</div>
+                </div>
+                <div class="ol-read-when">Today, 10:12 AM</div>
+              </div>
+
+              <div class="received-card">
+                <div class="received-from"><strong>Xinjia Pang</strong> recognized you</div>
+                <div class="recognition-banner" data-theme="collaboration" aria-label="Recognition banner image">
+                  <div><span>Recognition</span><strong>Great Collaboration</strong></div>
+                </div>
+                <div class="received-title">Thanks for helping Project Reeces move forward</div>
+                <div class="received-message">Jamie, thank you for the care and leadership you brought to Project Reeces. Your thoughtful collaboration, fast follow-through, and ability to connect the team helped us deliver with confidence.</div>
+
+                <div class="received-points">
+                  <div class="received-points-main"><span class="received-points-value">+100</span><span class="received-points-unit">points</span></div>
+                  <a href="#" class="received-redeem">Redeem your points ↗</a>
+                </div>
+
+                <div class="received-visibility">
+                  <div class="flabel">Visibility</div>
+                  <div class="radio-col">
+                    <label class="radio"><input type="radio" name="receivedVisibility" checked> Public — celebrate with the team in Viva Engage</label>
+                    <label class="radio"><input type="radio" name="receivedVisibility"> Private — keep this recognition just for you</label>
+                  </div>
+                </div>
+              </div>
+
+              <div class="comments">
+                <div class="comments-title">Celebrate &amp; say thanks</div>
+                <div class="comment-list" id="receivedComments">
+                  <div class="comment"><div class="comment-avatar" style="--c:#0f9d58">SC</div><div class="comment-body"><div class="comment-name">Sarah Chen</div><div class="comment-text">Congrats Jamie, so well deserved! 🎉</div></div></div>
+                  <div class="comment"><div class="comment-avatar" style="--c:#d83b01">DS</div><div class="comment-body"><div class="comment-name">Diego Santos</div><div class="comment-text">Amazing work on Voyager 👏</div></div></div>
+                </div>
+                <div class="comment-compose">
+                  <textarea id="receivedCommentInput" placeholder="Thank Xinjia or celebrate with the team…" aria-label="Add a comment"></textarea>
+                  <button class="btn btn-primary" type="button" id="receivedCommentPost">Post</button>
+                </div>
+              </div>
+
+              <footer class="email-footer">
+                <div class="email-footer-note">
+                  Don't want to receive recognition emails? <a href="#">Unsubscribe</a>
+                </div>
+                <div class="email-footer-links" style="margin-top:10px">
+                  <a href="#">Privacy Statement</a>
+                </div>
+                <div class="email-footer-address">
+                  <div>Microsoft Corporation</div>
+                  <div>One Microsoft Way</div>
+                  <div>Redmond, WA 98052</div>
+                </div>
+                <div class="ms-footer-brand" aria-label="Microsoft">
+                  <span class="ms-mark" aria-hidden="true"><span></span><span></span><span></span><span></span></span>
+                  <span>Microsoft</span>
+                </div>
+              </footer>
+            </div>
+          </section>
+
+          <!-- SCREEN: Jamie's product launch email (plain text) -->
+          <section class="screen" data-screen="launch">
+            <div class="ol-read-inner">
+              <button class="cp-launch-logo" id="cpLaunchLogo" type="button" aria-label="Open Copilot"></button>
+              <button class="cp-rec-launch-logo" id="cpRecLaunchLogo" type="button" aria-label="Recognize"></button>
+              <div class="ol-read-subj">Introducing Project Reeces — now live for everyone</div>
+              <div class="review-mail-meta">
+                <span style="width:40px;height:40px;border-radius:50%;background:#8b5cf6;color:#fff;display:grid;place-items:center;font-weight:700;flex:none;font-size:14px">JL</span>
+                <div>
+                  <div class="ol-read-name">Jamie Lee</div>
+                  <div class="ol-read-to">To: Project Reeces team</div>
+                </div>
+                <div class="ol-read-when">Today, 7:31 AM</div>
+              </div>
+              <div class="ol-body">
+                Hi everyone,<br><br>
+                I'm thrilled to share that <strong>Project Reeces</strong> is now live for all teams. After months of close collaboration across design, engineering, and operations, the new experience is rolling out to everyone starting today.<br><br>
+                A few highlights of what's now available:<br>
+                • A redesigned home that surfaces the work that matters most<br>
+                • Faster search across your projects and conversations<br>
+                • Smarter, context-aware suggestions throughout your day<br><br>
+                This launch wouldn't have happened without the dedication of so many people who went above and beyond. Thank you for the energy, care, and craft you brought to it.<br><br>
+                If you have questions or feedback, just reply here — we'd love to hear from you.<br><br>
+                Thank you, and congratulations to the whole team!<br><br>
+                — Jamie
+              </div>
+              <footer class="email-footer">
+                <div class="email-footer-note">
+                  You're receiving this because you're on the Project Reeces team.
                 </div>
                 <div class="email-footer-links" style="margin-top:10px">
                   <a href="#">Privacy Statement</a>
@@ -449,6 +657,154 @@
           </section>
 
         </div>
+
+        <!-- Copilot side panel (opened from the launch email logo) -->
+        <aside class="cp-panel" id="cpPanel" hidden aria-label="Copilot">
+          <header class="cp-panel-top">
+            <button class="cp-panel-menu" id="cpPanelMenu" type="button" aria-label="Menu">☰</button>
+            <span class="cp-panel-title" id="cpPanelTitle">Copilot</span>
+            <button class="cp-panel-x" id="cpPanelClose" type="button" aria-label="Close">✕</button>
+          </header>
+
+          <!-- CHAT view -->
+          <div class="cp-panel-body" data-pview="chat">
+            <div class="cp-panel-composer">
+              <div class="cp-panel-input">Message Copilot</div>
+              <span class="cp-panel-plus" aria-hidden="true">+</span>
+            </div>
+            <div class="cp-panel-cards">
+              <button class="cp-panel-card" type="button">Show my top action items</button>
+              <button class="cp-panel-card" type="button">Which emails need urgent replies?</button>
+              <button class="cp-panel-card" type="button">Unblock others</button>
+            </div>
+            <div class="cp-panel-gallery">✨ Prompt Gallery</div>
+          </div>
+
+          <!-- RECOGNITION AGENT view -->
+          <div class="cp-panel-body" data-pview="recognition" hidden>
+            <div class="cp-agent-hero">
+              <span class="cp-agent-logo" aria-hidden="true"></span>
+              <div class="cp-agent-hero-title">Who would you like to recognize?</div>
+            </div>
+            <div class="cp-panel-composer">
+              <div class="cp-panel-input">Message Recognition</div>
+              <span class="cp-panel-plus" aria-hidden="true">+</span>
+            </div>
+            <div class="cp-rec-panel-cards">
+              <button class="cp-rec-panel-card" id="cpRecognizeSender" type="button">
+                <span class="cp-rec-panel-ic">🏅</span>
+                <span><span class="cp-rec-panel-title">Recognize Jamie Lee</span><span class="cp-rec-panel-sub">Thank the sender of this email for leading Project Reeces.</span></span>
+              </button>
+              <button class="cp-rec-panel-card" type="button">
+                <span class="cp-rec-panel-ic">🔎</span>
+                <span><span class="cp-rec-panel-title">Find contributors</span><span class="cp-rec-panel-sub">Who made meaningful contributions to my recent projects?</span></span>
+              </button>
+              <button class="cp-rec-panel-card" type="button">
+                <span class="cp-rec-panel-ic">✨</span>
+                <span><span class="cp-rec-panel-title">Discover moments</span><span class="cp-rec-panel-sub">Surface recognition opportunities from recent collaboration.</span></span>
+              </button>
+            </div>
+          </div>
+
+          <!-- MENU flyout -->
+          <div class="cp-menu-flyout" id="cpMenuFlyout" hidden>
+            <button class="cp-menu-item" type="button" data-pmenu="chat">💬 Chat</button>
+            <div class="cp-menu-label">Agents</div>
+            <button class="cp-menu-agent" type="button"><span class="cp-magent-ic researcher"></span>Researcher</button>
+            <button class="cp-menu-agent" type="button"><span class="cp-magent-ic analyst"></span>Analyst</button>
+            <button class="cp-menu-agent" type="button" data-pmenu="recognition"><span class="cp-magent-ic recognition"></span>Recognition</button>
+            <button class="cp-menu-agent" type="button"><span class="cp-magent-ic writing"></span>Writing Coach</button>
+            <button class="cp-menu-agent" type="button"><span class="cp-magent-ic"></span>Get agents</button>
+            <div class="cp-menu-label">Conversations</div>
+            <div class="cp-menu-convo">Daily Task Setup Request</div>
+            <div class="cp-menu-convo">Project Reeces launch notes</div>
+          </div>
+        </aside>
+
+        <!-- Recognition side panel (opened from the recognition logo on the launch email) -->
+        <aside class="cp-panel" id="recPanel" hidden aria-label="Recognition">
+          <header class="cp-panel-top">
+            <span class="cp-panel-title">Recognition</span>
+            <button class="cp-panel-x" id="recPanelClose" type="button" aria-label="Close">✕</button>
+          </header>
+          <div class="cp-panel-body">
+            <div class="review-card rec-panel-card" id="panelReviewCard">
+              <div class="review-card-inner">
+                <div class="review-section">
+                  <div class="flabel">Recipients</div>
+                  <div class="recipient-field">
+                    <div class="recipient-list" id="panelRecipientList">
+                      <div class="recipient-main">
+                        <div class="recipient-avatar" aria-hidden="true">JL</div>
+                        <div class="recipient-name">Jamie Lee</div>
+                      </div>
+                    </div>
+                    <button class="add-recipient" type="button" id="panelAddRecipient"><span class="add-icon" aria-hidden="true">+</span>Add recipient</button>
+                  </div>
+                </div>
+
+                <div class="review-section category-section">
+                  <div class="flabel">Recognition category</div>
+                  <div class="chips" id="panelCategoryChips">
+                    <button class="chip sel" type="button" data-category="collaboration" data-banner="Great Collaboration">Collaboration <span class="sug">(suggested)</span></button>
+                    <button class="chip" type="button" data-category="leadership" data-banner="Leadership">Leadership</button>
+                    <button class="chip" type="button" data-category="impact" data-banner="Meaningful Impact">Impact</button>
+                    <button class="chip" type="button" data-category="innovation" data-banner="Innovation">Innovation</button>
+                    <button class="chip" type="button" data-category="teamwork" data-banner="Teamwork">Teamwork</button>
+                    <button class="chip" type="button" data-category="mentorship" data-banner="Mentorship">Mentorship</button>
+                  </div>
+                </div>
+
+                <div class="review-section recognition-banner" id="panelRecognitionBanner" data-theme="collaboration" aria-label="Recognition banner image">
+                  <div>
+                    <span>Recognition</span>
+                    <strong id="panelBannerTitle">Great Collaboration</strong>
+                  </div>
+                </div>
+
+                <div class="review-section">
+                  <div class="rt" id="panelDraftTitle" contenteditable="true" role="textbox" aria-label="Recognition title">Thanks for helping Project Reeces move forward</div>
+                </div>
+
+                <div class="review-section">
+                  <textarea aria-label="Recognition message">Jamie, thank you for the care and leadership you brought to Project Reeces. Your thoughtful collaboration, fast follow-through, and ability to connect the team helped us deliver with confidence.</textarea>
+                </div>
+
+                <div class="review-section review-grid">
+                  <div class="setting-card points">
+                    <div class="flabel">Points</div>
+                    <select aria-label="Points">
+                      <option>50 points</option>
+                      <option selected>100 points</option>
+                      <option>150 points</option>
+                      <option>200 points</option>
+                    </select>
+                    <div class="setting-helper">Reward value suggested from the contribution context.</div>
+                  </div>
+                  <div class="setting-card visibility">
+                    <div class="flabel">Visibility</div>
+                    <div class="radio-col">
+                      <label class="radio"><input type="radio" name="panelVisibility" checked>Public - share in Viva Engage and team emails</label>
+                      <label class="radio"><input type="radio" name="panelVisibility">Private - send only to recipient email</label>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="review-actions">
+                  <button class="btn btn-primary" type="button" id="panelSendRec">Send recognition</button>
+                  <button class="btn" type="button" id="panelDeleteRec">Delete</button>
+                </div>
+              </div>
+            </div>
+            <div class="rec-confirm" id="panelConfirm" hidden>
+              <div class="rec-confirm-check">✓</div>
+              <div class="rec-confirm-title">Recognition sent successfully.</div>
+              <div class="rec-confirm-sub">Jamie's recognition has been delivered.</div>
+              <button class="btn btn-primary" type="button" id="panelCreateAnother">Create another recognition</button>
+              <a href="#" class="rec-confirm-link">View all my recognition ↗</a>
+            </div>
+          </div>
+        </aside>
       </div>
     </div>
 
@@ -517,8 +873,21 @@
           return;
         }
         if (mail.dataset.mail === 'review') setReviewVariant('review');
+        mail.classList.remove('is-unread');
         show(mail.dataset.mail);
       }));
+
+      const receivedCommentInput = document.getElementById('receivedCommentInput'), receivedCommentPost = document.getElementById('receivedCommentPost'), receivedComments = document.getElementById('receivedComments');
+      if (receivedCommentPost && receivedCommentInput && receivedComments) receivedCommentPost.addEventListener('click', () => {
+        const text = receivedCommentInput.value.trim();
+        if (!text) return;
+        const c = document.createElement('div');
+        c.className = 'comment';
+        c.innerHTML = '<div class="comment-avatar" style="--c:#0f6cbd">JL</div><div class="comment-body"><div class="comment-name">Jamie Lee (you)</div><div class="comment-text"></div></div>';
+        c.querySelector('.comment-text').textContent = text;
+        receivedComments.appendChild(c);
+        receivedCommentInput.value = '';
+      });
 
       // frequency option selection
       app.querySelectorAll('.freq-list').forEach(list => list.querySelectorAll('.freq').forEach(f => f.addEventListener('click', () => {
@@ -564,6 +933,8 @@
       if (emailSendRec && emailReviewCard && emailSentCard) emailSendRec.addEventListener('click', () => {
         app.dataset.recognitionSent = 'true';
         emailSentCard.hidden = false;
+        const receivedMail = document.getElementById('receivedMail');
+        if (receivedMail) { receivedMail.hidden = false; receivedMail.classList.add('is-unread'); }
         emailReviewCard.querySelectorAll('button, input, select, textarea').forEach(control => {
           control.disabled = true;
         });
@@ -603,6 +974,95 @@
 
       const openRecognitionAgent = document.getElementById('openRecognitionAgent');
       if (openRecognitionAgent && cpProtoFrame) openRecognitionAgent.addEventListener('click', openAgentRecognition);
+    })();
+  </script>
+
+  <script>
+    // Copilot side panel on Jamie's launch email
+    (function () {
+      const app = document.getElementById('app');
+      const panel = document.getElementById('cpPanel');
+      if (!app || !panel) return;
+      const logo = document.getElementById('cpLaunchLogo');
+      const menuBtn = document.getElementById('cpPanelMenu');
+      const flyout = document.getElementById('cpMenuFlyout');
+      const closeBtn = document.getElementById('cpPanelClose');
+      const title = document.getElementById('cpPanelTitle');
+
+      function setView(v) {
+        panel.querySelectorAll('.cp-panel-body').forEach(b => { b.hidden = b.dataset.pview !== v; });
+        if (title) title.textContent = v === 'recognition' ? 'Recognition' : 'Copilot';
+        if (flyout) flyout.hidden = true;
+      }
+      if (logo) logo.addEventListener('click', () => { const r = document.getElementById('recPanel'); if (r) r.hidden = true; panel.hidden = false; setView('chat'); });
+      if (closeBtn) closeBtn.addEventListener('click', () => { panel.hidden = true; });
+      if (menuBtn && flyout) menuBtn.addEventListener('click', () => { flyout.hidden = !flyout.hidden; });
+      panel.querySelectorAll('[data-pmenu]').forEach(b => b.addEventListener('click', () => setView(b.dataset.pmenu)));
+
+      // First recognition card -> open the Recognition agent flow
+      const recognizeSender = document.getElementById('cpRecognizeSender');
+      const frame = document.getElementById('cpProtoFrame');
+      if (recognizeSender) recognizeSender.addEventListener('click', () => {
+        panel.hidden = true;
+        if (frame) frame.src = frame.dataset.src + '?screen=recognition';
+        app.dataset.view = 'copilot';
+      });
+    })();
+  </script>
+
+  <script>
+    // Recognition panel on Jamie's launch email
+    (function () {
+      const recLogo = document.getElementById('cpRecLaunchLogo');
+      const recPanel = document.getElementById('recPanel');
+      if (!recLogo || !recPanel) return;
+      const recClose = document.getElementById('recPanelClose');
+      const cpPanel = document.getElementById('cpPanel');
+      recLogo.addEventListener('click', () => { if (cpPanel) cpPanel.hidden = true; recPanel.hidden = false; });
+      if (recClose) recClose.addEventListener('click', () => { recPanel.hidden = true; });
+
+      // category chips -> banner theme/title
+      const chips = document.getElementById('panelCategoryChips');
+      const banner = document.getElementById('panelRecognitionBanner');
+      const bannerTitle = document.getElementById('panelBannerTitle');
+      if (chips && banner && bannerTitle) chips.querySelectorAll('.chip').forEach(chip => chip.addEventListener('click', () => {
+        chips.querySelectorAll('.chip').forEach(x => x.classList.remove('sel'));
+        chip.classList.add('sel');
+        banner.dataset.theme = chip.dataset.category || 'collaboration';
+        bannerTitle.textContent = chip.dataset.banner || chip.textContent.trim();
+      }));
+
+      // add recipient
+      const addRecipient = document.getElementById('panelAddRecipient');
+      const recipientList = document.getElementById('panelRecipientList');
+      if (addRecipient && recipientList) addRecipient.addEventListener('click', () => {
+        if (recipientList.dataset.added === 'true') return;
+        recipientList.dataset.added = 'true';
+        const next = document.createElement('div');
+        next.className = 'recipient-main';
+        next.innerHTML = '<div class="recipient-avatar" aria-hidden="true">SC</div><div class="recipient-name">Sarah Chen</div>';
+        recipientList.appendChild(next);
+        addRecipient.textContent = 'Recipient added';
+        addRecipient.disabled = true;
+      });
+
+      // send recognition
+      const sendRec = document.getElementById('panelSendRec');
+      const reviewCard = document.getElementById('panelReviewCard');
+      const confirm = document.getElementById('panelConfirm');
+      if (sendRec && reviewCard && confirm) sendRec.addEventListener('click', () => {
+        reviewCard.hidden = true;
+        confirm.hidden = false;
+      });
+
+      const createAnother = document.getElementById('panelCreateAnother');
+      if (createAnother && reviewCard && confirm) createAnother.addEventListener('click', () => {
+        confirm.hidden = true;
+        reviewCard.hidden = false;
+      });
+
+      const delRec = document.getElementById('panelDeleteRec');
+      if (delRec) delRec.addEventListener('click', () => { recPanel.hidden = true; });
     })();
   </script>
 </body>

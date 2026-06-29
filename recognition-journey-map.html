@@ -520,6 +520,13 @@
     .proto-id h2 { margin: 0; font-size: 20px; line-height: 1.2; }
     .proto-in { color: var(--muted); font-size: 16px; font-weight: 500; margin-right: 12px; }
 
+    .proto-stage-tags {
+      display: inline-flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+    }
+
     .proto-stage-tag {
       display: inline-flex;
       align-items: center;
@@ -533,7 +540,7 @@
     }
 
     .proto-close {
-      margin-left: auto;
+      margin-left: 16px;
       border: 1px solid var(--line);
       background: #fff;
       color: var(--ink);
@@ -545,6 +552,8 @@
     }
 
     .proto-close:hover { background: #f1f4f9; }
+    .proto-renew { border: 0; background: transparent; color: var(--ink); border-radius: 8px; padding: 8px 14px; font-size: 13px; font-weight: 700; cursor: pointer; margin-left: auto; }
+    .proto-renew:hover { background: #f1f4f9; }
 
     .proto-body { flex: 1; margin-top: 18px; }
     .proto-panel { display: none; animation: protoIn .25s ease; }
@@ -1075,16 +1084,16 @@
       </aside>
       <section class="swimlane" aria-label="Cross-platform Touchpoints">
         <div class="swimlane-row">
-          <div class="touchpoint-bar tp-pill" data-tp="cowork" role="button" tabindex="0" style="--bar-color:#2563eb; --bar-gradient:linear-gradient(90deg, color-mix(in srgb, #2563eb 15%, #ffffff), color-mix(in srgb, #0f766e 13%, #ffffff)); grid-column:1 / span 2;">
-            <strong>Copilot/Cowork</strong>
-            <span>Discover contributors · Start recognition</span>
+          <div class="touchpoint-bar tp-pill" data-tp="outlook" role="button" tabindex="0" style="--bar-color:#0f766e; --bar-gradient:linear-gradient(90deg, color-mix(in srgb, #2563eb 14%, #ffffff), color-mix(in srgb, #0f766e 13%, #ffffff) 50%, color-mix(in srgb, #b45309 14%, #ffffff)); grid-column:1 / span 3;">
+            <strong>Outlook</strong>
+            <span>Recognition reminder · Send from email context</span>
             <span class="tp-cue" aria-hidden="true">View prototype ↗</span>
           </div>
         </div>
         <div class="swimlane-row">
-          <div class="touchpoint-bar tp-pill" data-tp="outlook" role="button" tabindex="0" style="--bar-color:#2563eb; --bar-gradient:linear-gradient(90deg, color-mix(in srgb, #2563eb 15%, #ffffff), color-mix(in srgb, #0f766e 13%, #ffffff)); grid-column:1 / span 2;">
-            <strong>Outlook</strong>
-            <span>Recognition reminder · Send from email context</span>
+          <div class="touchpoint-bar tp-pill" data-tp="cowork" role="button" tabindex="0" style="--bar-color:#2563eb; --bar-gradient:linear-gradient(90deg, color-mix(in srgb, #2563eb 15%, #ffffff), color-mix(in srgb, #0f766e 13%, #ffffff)); grid-column:1 / span 2;">
+            <strong>Copilot/Cowork</strong>
+            <span>Discover contributors · Start recognition</span>
             <span class="tp-cue" aria-hidden="true">View prototype ↗</span>
           </div>
         </div>
@@ -1099,14 +1108,12 @@
           <div class="touchpoint-bar tp-pill" data-tp="viva" role="button" tabindex="0" style="--bar-color:#b45309; grid-column:3 / span 1;">
             <strong>Viva Engage</strong>
             <span>Share recognition story</span>
-            <span class="tp-cue" aria-hidden="true">View ↗</span>
           </div>
         </div>
         <div class="swimlane-row">
           <div class="touchpoint-bar tp-pill" data-tp="linkedin" role="button" tabindex="0" style="--bar-color:#b45309; grid-column:3 / span 1;">
             <strong>LinkedIn</strong>
             <span>Optional external sharing</span>
-            <span class="tp-cue" aria-hidden="true">View ↗</span>
           </div>
         </div>
         <div class="swimlane-row">
@@ -1117,7 +1124,6 @@
           <div class="touchpoint-bar tp-pill" data-tp="connect" role="button" tabindex="0" style="--bar-color:#be123c; grid-column:5 / span 1;">
             <strong>Connect</strong>
             <span>Add recognition evidence</span>
-            <span class="tp-cue" aria-hidden="true">View ↗</span>
           </div>
         </div>
       </section>
@@ -1134,9 +1140,10 @@
     <div class="proto-shell">
       <header class="proto-bar">
         <div class="proto-id">
-          <span id="protoSub" class="proto-stage-tag"></span>
+          <span id="protoSub" class="proto-stage-tags"></span>
           <h2 class="proto-heading"><span class="proto-in">in</span><span id="protoTitle">Prototype</span></h2>
         </div>
+        <button class="proto-renew" id="protoRenew" type="button">Renew ↻</button>
         <button class="proto-close" id="protoClose" type="button">Close ✕</button>
       </header>
 
@@ -1224,12 +1231,19 @@
       const subEl = document.getElementById('protoSub');
       const body = document.getElementById('protoBody');
       const meta = {
-        cowork: { name: 'Copilot/Cowork', stage: 'Discover Contributions', stageColor: '#2563eb', color: '#2563eb' },
-        outlook: { name: 'Outlook', stage: 'Create Recognition', stageColor: '#0f766e', color: '#2563eb' },
-        teams: { name: 'Teams App', stage: 'Create Recognition', stageColor: '#0f766e', color: '#0f766e' },
-        viva: { name: 'Viva Engage', stage: 'Celebrate Recognition', stageColor: '#b45309', color: '#b45309' },
-        linkedin: { name: 'LinkedIn', stage: 'Celebrate Recognition', stageColor: '#b45309', color: '#0a66c2' },
-        connect: { name: 'Connect', stage: 'Build Career Visibility', stageColor: '#be123c', color: '#be123c' }
+        cowork: { name: 'Copilot/Cowork', color: '#2563eb', stages: ['discover', 'create'] },
+        outlook: { name: 'Outlook', color: '#2563eb', stages: ['discover', 'create', 'celebrate'] },
+        teams: { name: 'Teams App', color: '#0f766e', stages: ['discover', 'create', 'celebrate'] },
+        viva: { name: 'Viva Engage', color: '#b45309', stages: ['celebrate'] },
+        linkedin: { name: 'LinkedIn', color: '#0a66c2', stages: ['celebrate'] },
+        connect: { name: 'Connect', color: '#be123c', stages: ['career'] }
+      };
+      const stageInfo = {
+        discover: { label: 'Discover Contributions', color: '#2563eb' },
+        create: { label: 'Create Recognition', color: '#0f766e' },
+        celebrate: { label: 'Celebrate Recognition', color: '#b45309' },
+        redeem: { label: 'Redeem Points', color: '#7c3aed' },
+        career: { label: 'Build Career Visibility', color: '#be123c' }
       };
       const pills = document.querySelectorAll('.tp-pill');
       const panels = body.querySelectorAll('.proto-panel');
@@ -1240,8 +1254,16 @@
         stage.hidden = false;
         stage.style.setProperty('--proto-accent', m.color);
         titleEl.textContent = m.name;
-        subEl.textContent = m.stage;
-        subEl.style.setProperty('--stage-tag-color', m.stageColor);
+        subEl.innerHTML = '';
+        (m.stages || []).forEach(s => {
+          const info = stageInfo[s];
+          if (!info) return;
+          const tag = document.createElement('span');
+          tag.className = 'proto-stage-tag';
+          tag.textContent = info.label;
+          tag.style.setProperty('--stage-tag-color', info.color);
+          subEl.appendChild(tag);
+        });
         panels.forEach(p => p.classList.toggle('is-active', p.dataset.panel === tp));
         pills.forEach(p => p.classList.toggle('is-active', p.dataset.tp === tp));
         stage.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -1260,6 +1282,12 @@
         });
       });
       document.getElementById('protoClose').addEventListener('click', close);
+      document.getElementById('protoRenew').addEventListener('click', () => {
+        const active = document.querySelector('.tp-pill.is-active');
+        if (!active) return;
+        const frame = body.querySelector('.proto-panel.is-active iframe');
+        if (frame && frame.dataset.src) frame.src = frame.dataset.src;
+      });
       document.addEventListener('keydown', e => { if (e.key === 'Escape' && !stage.hidden) close(); });
     })();
   </script>

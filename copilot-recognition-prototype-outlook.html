@@ -220,6 +220,9 @@
     .cp-chat-screen { display: flex; flex-direction: column; height: 100%; flex: 1; min-height: 0; }
     .cp-app[data-mode-state="cowork"][data-workspace="1"] .cp-chat-screen { display: grid; grid-template-columns: minmax(0, 1fr) 360px; grid-template-rows: minmax(0, 1fr) auto; }
     .cp-thread { flex: 1; overflow: auto; padding: 28px 10%; display: flex; flex-direction: column; gap: 18px; }
+    /* When the recognition flow continues after onboarding, keep setup messages first */
+    .cp-thread.keep-setup > [id^="cpSetup"] { order: -1; }
+    .cp-thread.keep-setup [data-step="1"] { display: none !important; }
     .cp-app[data-mode-state="cowork"][data-workspace="1"] .cp-thread { grid-column: 1; grid-row: 1; padding: 28px 7%; }
     .cp-app[data-mode-state="cowork"][data-workspace="1"] .cp-composer { grid-column: 1; grid-row: 2; padding-left: 7%; padding-right: 7%; }
     .cp-app[data-mode-state="cowork"] #cpDraftCard { display: none !important; }
@@ -361,6 +364,8 @@
     .cp-input { flex: 1; border: 0; outline: 0; resize: none; font: inherit; font-size: 14px; line-height: 1.5; color: var(--cp-fg); background: transparent; max-height: 240px; overflow-y: auto; }
     .cp-send { width: 34px; height: 34px; flex: none; border: 0; border-radius: 9px; background: var(--cp-brand); cursor: pointer; display: grid; place-items: center; }
     .cp-send:hover { background: var(--cp-brand-press); }
+    .cp-send:disabled { background: #c7c7c7; cursor: not-allowed; }
+    .cp-send:disabled:hover { background: #c7c7c7; }
     .cp-send .cp-i { stroke: #fff; }
   </style>
 </head>
@@ -448,7 +453,7 @@
               <button class="cp-show-more-link" type="button">Show more</button>
             </div>
             <button class="cp-up-next-card" type="button" data-action="review">
-              <span class="cp-up-next-title">Recognize contributors from Project Voyager</span>
+              <span class="cp-up-next-title">Recognize contributors from Project Reeces</span>
             </button>
             <div class="cp-try-row">
               <span>Try these next</span>
@@ -479,7 +484,7 @@
             </div>
             <button class="cp-cowork-task-card" type="button" data-action="review">
               <div>
-                <div class="cp-cowork-task-title">Recognize contributors from Project Voyager</div>
+                <div class="cp-cowork-task-title">Recognize contributors from Project Reeces</div>
                 <div class="cp-cowork-task-meta"><span class="cp-attention-only">Need attention</span><span class="cp-complete-only">Complete today</span></div>
               </div>
               <span class="cp-cowork-more" aria-hidden="true">•••</span>
@@ -503,7 +508,7 @@
           <div class="cp-stats-note">Based on tasks loaded below</div>
 
           <div class="cp-rec-task">
-            <span class="cp-rec-msg">Recognize contributors from Project Voyager</span>
+            <span class="cp-rec-msg">Recognize contributors from Project Reeces</span>
             <span class="cp-attention-pill">Needs attention</span>
             <span class="cp-rec-time">Jun 25, 2026</span>
             <span class="cp-copilot-ic"></span>
@@ -576,13 +581,13 @@
       <section class="cp-screen" data-screen="chat">
         <div class="cp-chat-screen">
           <div class="cp-thread" id="cpThread">
-            <div class="cp-msg user" data-step="1">Review my recent Project Voyager collaboration and recommend who to recognize.</div>
+            <div class="cp-msg user" data-step="1">Review my recent Project Reeces collaboration and recommend who to recognize.</div>
             <div class="cp-msg ai cp-typing" id="cpTyping1">
               <div class="cp-typing-dots"><span></span><span></span><span></span></div>
             </div>
             <div class="cp-msg ai" id="cpRec1">
               <div class="cp-ai-body cp-plain">
-                <div>I reviewed your recent Project Voyager collaboration over the past three weeks — across Teams meetings, chats, Outlook conversations, and shared documents.</div>
+                <div>I reviewed your recent Project Reeces collaboration over the past three weeks — across Teams meetings, chats, Outlook conversations, and shared documents.</div>
                 <div style="margin-top:10px">You worked with 12 teammates. Based on participation and collaboration patterns, three people's contributions stand out.</div>
                 <div class="cp-contrib"><div class="nm">Jamie</div><ul><li>Led UX strategy and design reviews</li><li>Helped align engineering and design</li><li>Frequently unblocked cross-team discussions</li></ul></div>
                 <div class="cp-contrib"><div class="nm">Steven</div><ul><li>Coordinated engineering implementation</li><li>Reviewed multiple pull requests</li><li>Helped resolve critical launch issues</li></ul></div>
@@ -596,7 +601,7 @@
             <div class="cp-msg ai" id="cpRec2">
               <div class="cp-ai-body cp-plain">
                 <div>Based on your recent collaboration, I believe <strong>Jamie</strong> would be the strongest candidate for recognition.</div>
-                <div style="margin-top:10px">She consistently demonstrated leadership, collaboration, and helped the team deliver Project Voyager successfully.</div>
+                <div style="margin-top:10px">She consistently demonstrated leadership, collaboration, and helped the team deliver Project Reeces successfully.</div>
               </div>
             </div>
             <div class="cp-divider" id="cpDivider2"></div>
@@ -636,7 +641,7 @@
                 <br>
                 <div>Jamie's recognition has been delivered.</div>
                 <br>
-                <div>While reviewing Project Voyager, I also identified two additional teammates whose contributions may deserve recognition.</div>
+                <div>While reviewing Project Reeces, I also identified two additional teammates whose contributions may deserve recognition.</div>
                 <br>
                 <div>• Steven<br>• Sarah</div>
                 <br>
@@ -667,11 +672,11 @@
                     </div>
                   </div>
                   <div class="cp-field-row"><div class="cp-field-label">Title</div>
-                    <div class="cp-rt cp-title-rt cp-rec-title-field" id="cpRecTitle" contenteditable="true">Exceptional collaboration on Project Voyager</div>
+                    <div class="cp-rt cp-title-rt cp-rec-title-field" id="cpRecTitle" contenteditable="true">Exceptional collaboration on Project Reeces</div>
                   </div>
                   <div class="cp-field-row"><div class="cp-field-label">Recognition</div>
                     <div class="cp-rt-wrap">
-                      <div class="cp-rt cp-rec-text-field" id="cpRecText" contenteditable="true">Jamie played a critical role in helping the team successfully deliver Project Voyager. Her thoughtful design feedback, cross-team collaboration, and leadership significantly improved the final experience.</div>
+                      <div class="cp-rt cp-rec-text-field" id="cpRecText" contenteditable="true">Jamie played a critical role in helping the team successfully deliver Project Reeces. Her thoughtful design feedback, cross-team collaboration, and leadership significantly improved the final experience.</div>
                       <div class="cp-rt-footer">
                         <span class="cp-char cp-char-count-field" id="cpCharCount">0/500 character limit</span>
                         <button class="cp-proof" type="button"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l1.5 4.5L18 8l-4.5 1.5L12 14l-1.5-4.5L6 8l4.5-1.5z"/><path d="M18.5 13l.9 2.6L22 16.5l-2.6.9L18.5 20l-.9-2.6L15 16.5l2.6-.9z"/></svg>proofwriting</button>
@@ -800,10 +805,11 @@ Guide me through a short onboarding experience.</div>
                   <li>Recent meetings</li>
                   <li>People you've collaborated with</li>
                   <li>This week's work</li>
-                  <li>Let Copilot decide — I'll scan all of the above <strong>(recommended)</strong></li>
+                  <li>Let me decide — I'll scan all of the above <strong>(recommended)</strong></li>
                 </ul>
               </div>
             </div>
+            <div class="cp-msg user" id="cpSetupReviewPick">Let me decide</div>
             <div class="cp-msg ai cp-typing" id="cpSetupReviewLoading">
               <div class="cp-typing-dots"><span></span><span></span><span></span></div>
             </div>
@@ -854,7 +860,7 @@ Guide me through a short onboarding experience.</div>
                 <br>
                 <div>Jamie's recognition has been delivered.</div>
                 <br>
-                <div>While reviewing Project Voyager, I also identified two additional teammates whose contributions may deserve recognition.</div>
+                <div>While reviewing Project Reeces, I also identified two additional teammates whose contributions may deserve recognition.</div>
                 <br>
                 <div>• Steven<br>• Sarah</div>
                 <br>
@@ -898,11 +904,11 @@ Guide me through a short onboarding experience.</div>
                   </div>
                 </div>
                 <div class="cp-field-row"><div class="cp-field-label">Title</div>
-                  <div class="cp-rt cp-title-rt cp-rec-title-field" contenteditable="true">Exceptional collaboration on Project Voyager</div>
+                  <div class="cp-rt cp-title-rt cp-rec-title-field" contenteditable="true">Exceptional collaboration on Project Reeces</div>
                 </div>
                 <div class="cp-field-row"><div class="cp-field-label">Recognition</div>
                   <div class="cp-rt-wrap">
-                    <div class="cp-rt cp-rec-text-field" contenteditable="true">Jamie played a critical role in helping the team successfully deliver Project Voyager. Her thoughtful design feedback, cross-team collaboration, and leadership significantly improved the final experience.</div>
+                    <div class="cp-rt cp-rec-text-field" contenteditable="true">Jamie played a critical role in helping the team successfully deliver Project Reeces. Her thoughtful design feedback, cross-team collaboration, and leadership significantly improved the final experience.</div>
                     <div class="cp-rt-footer">
                       <span class="cp-char cp-char-count-field">0/500 character limit</span>
                       <button class="cp-proof" type="button"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l1.5 4.5L18 8l-4.5 1.5L12 14l-1.5-4.5L6 8l4.5-1.5z"/><path d="M18.5 13l.9 2.6L22 16.5l-2.6.9L18.5 20l-.9-2.6L15 16.5l2.6-.9z"/></svg>proofwriting</button>
@@ -943,12 +949,12 @@ Guide me through a short onboarding experience.</div>
       const screens = app.querySelectorAll('.cp-screen');
       const input = app.querySelector('#cpInput');
       const thread = app.querySelector('#cpThread');
-      const PROMPT = `Review my recent Project Voyager collaboration and recommend who to recognize.`;
+      const PROMPT = `Review my recent Project Reeces collaboration and recommend who to recognize.`;
       let chatStep = 0;
       let setupFrequency = 'Weekly';
 
       function clearSetupFlow() {
-        ['#cpSetupUser', '#cpSetupTyping', '#cpSetupWelcome', '#cpSetupYesUser', '#cpSetupQuestionTyping', '#cpSetupQuestion', '#cpSetupSaveTyping', '#cpSetupSaveDivider1', '#cpSetupSavedOutput', '#cpSetupSaveDivider2', '#cpSetupTryTyping', '#cpSetupTryOutput', '#cpSetupTryUser', '#cpSetupReviewOptions', '#cpSetupReviewLoading', '#cpSetupEnableUser', '#cpSetupLaterUser', '#cpSetupFrequencyTyping', '#cpSetupFrequency', '#cpSetupFrequencyUser', '#cpSetupTriggersTyping', '#cpSetupTriggers', '#cpSetupTriggersUser', '#cpSetupSummary'].forEach(s => {
+        ['#cpSetupUser', '#cpSetupTyping', '#cpSetupWelcome', '#cpSetupYesUser', '#cpSetupQuestionTyping', '#cpSetupQuestion', '#cpSetupSaveTyping', '#cpSetupSaveDivider1', '#cpSetupSavedOutput', '#cpSetupSaveDivider2', '#cpSetupTryTyping', '#cpSetupTryOutput', '#cpSetupTryUser', '#cpSetupReviewOptions', '#cpSetupReviewPick', '#cpSetupReviewLoading', '#cpSetupEnableUser', '#cpSetupLaterUser', '#cpSetupFrequencyTyping', '#cpSetupFrequency', '#cpSetupFrequencyUser', '#cpSetupTriggersTyping', '#cpSetupTriggers', '#cpSetupTriggersUser', '#cpSetupSummary'].forEach(s => {
           const el = app.querySelector(s);
           if (el) el.classList.remove('show');
         });
@@ -957,6 +963,7 @@ Guide me through a short onboarding experience.</div>
           setupCard.classList.remove('is-saving', 'is-saved', 'is-locked');
           setupCard.querySelectorAll('button, input, select').forEach(el => { el.disabled = false; });
         }
+        if (thread) thread.classList.remove('keep-setup');
         app.dataset.setupStep = '';
       }
 
@@ -1046,19 +1053,19 @@ Guide me through a short onboarding experience.</div>
           setTimeout(() => {
             if (loading) loading.classList.remove('show');
             if (options) options.classList.add('show');
-            if (input) { input.value = 'Let Copilot decide'; autosize(); }
+            if (input) { input.value = 'Let me decide'; autosize(); }
             scrollThread();
           }, 2000);
           return true;
         }
         if (app.dataset.setupStep === 'review-options') {
-          // Picked where to look — continue into the standard recognition flow
+          // Picked where to look — keep the setup conversation and continue the recognition flow below it
           app.dataset.setupStep = '';
           app.dataset.activeFlow = 'recognition';
-          app.querySelectorAll('.cp-msg').forEach(m => m.classList.remove('show'));
-          clearSetupFlow();
+          if (thread) thread.classList.add('keep-setup');
+          const pick = app.querySelector('#cpSetupReviewPick');
+          if (pick) pick.classList.add('show');
           chatStep = 1;
-          revealChat(1);
           runRecommendation();
           if (input) { input.value = ''; input.style.height = 'auto'; }
           scrollThread();
@@ -1114,6 +1121,7 @@ Guide me through a short onboarding experience.</div>
               setTimeout(() => {
                 typing3.classList.remove('show');
                 rec3.classList.add('show');
+                if (input) { input.value = 'Recognize Jamie'; autosize(); }
                 scrollThread();
               }, 1200);
             }
@@ -1190,11 +1198,20 @@ Guide me through a short onboarding experience.</div>
         if (chatStep === 2) runDraftGeneration();
       }
       const sendBtn = app.querySelector('#cpSend');
-      if (sendBtn) sendBtn.addEventListener('click', send);
-      if (input) {
-        input.addEventListener('input', autosize);
-        input.addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); } });
+      function updateSendState() {
+        if (!sendBtn) return;
+        const busy = !!app.querySelector('.cp-typing.show');           // an output is still generating
+        const empty = !input || !input.value.trim();                  // nothing to send next
+        sendBtn.disabled = busy || empty;
       }
+      if (sendBtn) sendBtn.addEventListener('click', () => { if (!sendBtn.disabled) send(); });
+      if (input) {
+        input.addEventListener('input', () => { autosize(); updateSendState(); });
+        input.addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); if (!sendBtn || !sendBtn.disabled) send(); } });
+      }
+      // Re-evaluate whenever messages/typing appear or disappear (covers all flows)
+      new MutationObserver(updateSendState).observe(app, { attributes: true, attributeFilter: ['class'], subtree: true });
+      updateSendState();
 
       app.querySelectorAll('[data-action="recognize"]').forEach(c => c.addEventListener('click', () => { chatStep = 2; revealChat(2); }));
       app.querySelectorAll('[data-action="send-recognition"]').forEach(b => b.addEventListener('click', () => {
@@ -1375,28 +1392,28 @@ Guide me through a short onboarding experience.</div>
       };
       const CATEGORY_COPY = {
         Collaboration: {
-          title: 'Exceptional collaboration on Project Voyager',
-          recognition: 'Jamie played a critical role in helping the team successfully deliver Project Voyager. Her thoughtful design feedback, cross-team collaboration, and ability to align different perspectives helped the team move forward with clarity.'
+          title: 'Exceptional collaboration on Project Reeces',
+          recognition: 'Jamie played a critical role in helping the team successfully deliver Project Reeces. Her thoughtful design feedback, cross-team collaboration, and ability to align different perspectives helped the team move forward with clarity.'
         },
         Leadership: {
-          title: 'Outstanding leadership on Project Voyager',
-          recognition: 'Jamie helped guide the team through important decisions on Project Voyager. Her steady leadership, clear communication, and ability to bring people together helped the project stay focused and move toward a strong outcome.'
+          title: 'Outstanding leadership on Project Reeces',
+          recognition: 'Jamie helped guide the team through important decisions on Project Reeces. Her steady leadership, clear communication, and ability to bring people together helped the project stay focused and move toward a strong outcome.'
         },
         Impact: {
-          title: 'Meaningful impact on Project Voyager',
-          recognition: 'Jamie made a meaningful impact on Project Voyager by helping the team solve key problems and deliver higher-quality work. Her contributions improved the final experience and helped the project reach an important milestone.'
+          title: 'Meaningful impact on Project Reeces',
+          recognition: 'Jamie made a meaningful impact on Project Reeces by helping the team solve key problems and deliver higher-quality work. Her contributions improved the final experience and helped the project reach an important milestone.'
         },
         Innovation: {
-          title: 'Innovative thinking on Project Voyager',
-          recognition: 'Jamie brought creative thinking and fresh ideas to Project Voyager. Her ability to explore better approaches, challenge assumptions, and turn ideas into practical improvements helped the team deliver a stronger solution.'
+          title: 'Innovative thinking on Project Reeces',
+          recognition: 'Jamie brought creative thinking and fresh ideas to Project Reeces. Her ability to explore better approaches, challenge assumptions, and turn ideas into practical improvements helped the team deliver a stronger solution.'
         },
         Teamwork: {
-          title: 'Great teamwork on Project Voyager',
-          recognition: 'Jamie showed outstanding teamwork throughout Project Voyager. She supported teammates, shared context generously, and helped keep collaboration moving smoothly across design, engineering, and launch readiness.'
+          title: 'Great teamwork on Project Reeces',
+          recognition: 'Jamie showed outstanding teamwork throughout Project Reeces. She supported teammates, shared context generously, and helped keep collaboration moving smoothly across design, engineering, and launch readiness.'
         },
         Mentorship: {
-          title: 'Thoughtful mentorship on Project Voyager',
-          recognition: 'Jamie made a real difference by mentoring teammates during Project Voyager. Her guidance, patience, and willingness to share expertise helped others grow while strengthening the team’s overall execution.'
+          title: 'Thoughtful mentorship on Project Reeces',
+          recognition: 'Jamie made a real difference by mentoring teammates during Project Reeces. Her guidance, patience, and willingness to share expertise helped others grow while strengthening the team’s overall execution.'
         }
       };
       function updateChars(scope) {
