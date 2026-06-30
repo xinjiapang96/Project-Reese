@@ -349,16 +349,6 @@
             <div class="subj">Recognition is now available in Microsoft 365 Copilot</div>
             <div class="prev">You can now recognize teammates directly from…</div>
           </div>
-          <div class="ol-mail is-unread" id="reviewMail" data-mail="review" hidden>
-            <div class="top"><span class="ol-dot"></span><span class="from">Microsoft Recognition</span><span class="when">10:04 AM</span></div>
-            <div class="subj">A recognition opportunity is ready for your review</div>
-            <div class="prev">Review Jamie's recognition draft before sending…</div>
-          </div>
-          <div class="ol-mail is-unread" id="optionTwoMail" data-mail="option2" hidden>
-            <div class="top"><span class="ol-dot"></span><span class="from">Microsoft Recognition</span><span class="when">10:04 AM</span></div>
-            <div class="subj">option 2</div>
-            <div class="prev">Another recognition email option…</div>
-          </div>
           <div class="ol-mail is-unread" id="receivedMail" data-mail="received" hidden>
             <div class="top"><span class="ol-dot"></span><span class="from">Microsoft Recognition</span><span class="when">10:12 AM</span></div>
             <div class="subj">🎉 You've been recognized — Great Collaboration</div>
@@ -368,6 +358,16 @@
             <div class="top"><span class="ol-dot"></span><span class="from">Jamie Lee</span><span class="when">7:31 AM</span></div>
             <div class="subj">Introducing Project Reeces — now live for everyone</div>
             <div class="prev">We're excited to announce that Project Reeces is now…</div>
+          </div>
+          <div class="ol-mail is-unread" id="reviewMail" data-mail="review">
+            <div class="top"><span class="ol-dot"></span><span class="from">Microsoft Recognition</span><span class="when">10:04 AM</span></div>
+            <div class="subj">A recognition opportunity is ready for your review</div>
+            <div class="prev">Review Jamie's recognition draft before sending…</div>
+          </div>
+          <div class="ol-mail is-unread" id="optionTwoMail" data-mail="option2">
+            <div class="top"><span class="ol-dot"></span><span class="from">Microsoft Recognition</span><span class="when">10:04 AM</span></div>
+            <div class="subj">option 2</div>
+            <div class="prev">Another recognition email option…</div>
           </div>
         </div>
 
@@ -393,13 +393,6 @@
 
               <div class="btn-row" style="margin-top:24px">
                 <button class="btn btn-primary btn-pill" type="button" id="tryFirst">Try first recognition</button>
-                <button class="btn btn-pill" type="button" id="subscribeBtn">Subscribe</button>
-              </div>
-              <div class="confirm-card" id="subNote" hidden style="margin-top:16px">
-                <div class="confirm-head"><span class="confirm-check">✓</span><div class="confirm-title">Recognition suggestions are turned on.</div></div>
-                <div class="confirm-sub">You'll receive occasional recognition suggestions when meaningful opportunities are found in your recent work. You'll always review and approve before anything is sent.</div>
-                <div class="confirm-sub">You'll get recommendations from Recognition <strong>weekly</strong>. To change how often you're notified or which recognition types are included, manage your preferences in the Recognition app in Teams.</div>
-                <a href="teams-recognition-prototype.html?pg=set" class="confirm-link">Manage in the Teams app ↗</a>
               </div>
 
               <div class="callout">
@@ -917,17 +910,6 @@
       // send recognition
       const sendRec = document.getElementById('sendRec'), draft = document.getElementById('draft'), sentCard = document.getElementById('sentCard');
       if (sendRec) sendRec.addEventListener('click', () => { draft.style.display = 'none'; sentCard.hidden = false; });
-
-      const subscribeBtn = document.getElementById('subscribeBtn'), subNote = document.getElementById('subNote'), reviewMail = document.getElementById('reviewMail'), optionTwoMail = document.getElementById('optionTwoMail');
-      if (subscribeBtn && subNote && reviewMail) subscribeBtn.addEventListener('click', () => {
-        subNote.hidden = false;
-        subscribeBtn.disabled = true;
-        subscribeBtn.textContent = 'Subscribed ✓';
-        window.setTimeout(() => {
-          reviewMail.hidden = false;
-          if (optionTwoMail) optionTwoMail.hidden = false;
-        }, 2000);
-      });
 
       const emailSendRec = document.getElementById('emailSendRec'), emailReviewCard = document.getElementById('emailReviewCard'), emailSentCard = document.getElementById('emailSentCard');
       if (emailSendRec && emailReviewCard && emailSentCard) emailSendRec.addEventListener('click', () => {
