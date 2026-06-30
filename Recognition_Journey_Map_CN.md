@@ -1,6 +1,6 @@
-# Recognition Ecosystem Journey Map（员工嘉奖产品 Journey Map）
+# Recognition Ecosystem Journey Map
 
-> 本文档与 `recognition-journey-map.html` 保持同步，HTML 为最终版本（source of truth）。
+> This document is kept in sync with `recognition-journey-map.html`, which is the final version (source of truth).
 
 **Employee recognition journey across the flow of work**
 
@@ -8,13 +8,13 @@ A horizontal product journey map showing how recognition is discovered, sent, ce
 
 ## Product Vision
 
-嘉奖应该发生在工作发生的地方。
+Recognition should happen where work happens.
 
-员工通常不会主动寻找一个独立的嘉奖工具。系统应在员工的日常协作流程中自然识别嘉奖机会，帮助他们发现有意义的贡献、表达感谢、庆祝成就，并将这些认可沉淀为长期职业可见性和组织洞察。
+Employees rarely go looking for a standalone recognition tool. The system should surface recognition opportunities naturally within everyday collaboration, helping people discover meaningful contributions, express appreciation, celebrate achievements, and turn that recognition into long-term career visibility and organizational insight.
 
 ## Journey Map
 
-横向旅程图分为 4 个阶段，每个阶段包含 **Current State**（Current Challenges / Opportunity）与 **Future Experience**（Trigger / User Actions / System Actions / Key Outputs）。
+The horizontal journey map is divided into 4 stages, each containing **Current State** (Current Challenges / Opportunity) and **Future Experience** (Trigger / User Actions / System Actions / Key Outputs).
 
 | | 1. Discover Contributions | 2. Send Recognition | 3. Celebrate Recognition | 4. Build Career Visibility |
 |---|---|---|---|---|
@@ -29,7 +29,7 @@ A horizontal product journey map showing how recognition is discovered, sent, ce
 
 ## Cross-platform Touchpoints
 
-嘉奖体验横跨多个协作面，每个触点服务于旅程中的特定阶段。
+The recognition experience spans multiple collaboration surfaces, with each touchpoint serving a specific stage of the journey.
 
 | Touchpoint | Stages | Role |
 |---|---|---|
@@ -45,16 +45,16 @@ Read left to right: discovery in Cowork, creation in Teams, celebration in colla
 ## Key Design Implications
 
 1. Recognition should be embedded, not destination-based.
-   嘉奖入口应出现在员工已经工作的地方，例如 Cowork、Teams、Outlook 和团队频道，而不是要求员工主动进入独立平台。
+   Recognition entry points should appear where employees already work — such as Cowork, Teams, Outlook, and team channels — rather than requiring them to go to a separate platform.
 
 2. AI should reduce recall and writing friction.
-   系统最关键的价值不是替用户完成嘉奖，而是帮助用户想起“谁贡献了什么”，并把感谢表达得更具体、更有质量。
+   The system's key value is not to complete recognition for the user, but to help them remember "who contributed what" and express appreciation more specifically and with higher quality.
 
 3. Recognition has two audiences.
-   一类是即时参与者：发送者、接收者、团队成员。另一类是长期使用者：员工本人、manager 和领导层。
+   One is the immediate participants: senders, recipients, and team members. The other is long-term consumers: the employee themselves, managers, and leadership.
 
 4. The product should connect moments to memory.
-   一次嘉奖不应只停留在通知流里，而要沉淀到员工档案、职业证据和绩效讨论中。
+   A single recognition should not stay buried in the notification feed; it should be captured into employee profiles, career evidence, and performance discussions.
 
 5. Make recognition visible at the right moment, in the right context.
-   通过工作流信号、AI 推荐和轻量化的庆祝动作，让认可在合适的时机出现在合适的协作面，并避免认可被淹没或显得形式化。
+   Through workflow signals, AI recommendations, and lightweight celebration actions, surface recognition at the right time on the right collaboration surface, while avoiding recognition getting buried or feeling performative.
