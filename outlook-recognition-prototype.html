@@ -71,6 +71,11 @@
     .ol-read { background: #fff; overflow: auto; min-height: 0; }
     .ol-read-inner { padding: 26px 30px 36px; max-width: 680px; margin: 0 auto; }
     .ol-read-subj { font-size: 22px; font-weight: 700; line-height: 1.25; }
+    .review-subj-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
+    .review-subj-row .ol-read-subj { margin: 0; min-width: 0; }
+    .variant-toggle { display: inline-flex; flex: none; background: #f0f0f0; border-radius: 999px; padding: 3px; }
+    .variant-btn { border: 0; background: transparent; color: var(--fg2); border-radius: 999px; padding: 6px 14px; font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+    .variant-btn.sel { background: #fff; color: var(--brand); box-shadow: 0 1px 2px rgba(0,0,0,.14); }
     .ol-read-meta { display: flex; align-items: center; gap: 12px; margin: 16px 0 0; }
     .ol-read-name { font-weight: 700; font-size: 14px; }
     .ol-read-to { font-size: 12px; color: var(--fg2); }
@@ -364,11 +369,6 @@
             <div class="subj">A recognition opportunity is ready for your review</div>
             <div class="prev">Review Jamie's recognition draft before sending…</div>
           </div>
-          <div class="ol-mail is-unread" id="optionTwoMail" data-mail="option2">
-            <div class="top"><span class="ol-dot"></span><span class="from">Microsoft Recognition</span><span class="when">10:04 AM</span></div>
-            <div class="subj">option 2</div>
-            <div class="prev">Another recognition email option…</div>
-          </div>
         </div>
 
         <div class="ol-read">
@@ -424,7 +424,13 @@
           <!-- SCREEN 2: recognition review email -->
           <section class="screen" data-screen="review">
             <div class="ol-read-inner">
-              <div class="ol-read-subj">A recognition opportunity is ready for your review</div>
+              <div class="review-subj-row">
+                <div class="ol-read-subj">A recognition opportunity is ready for your review</div>
+                <div class="variant-toggle" role="tablist" aria-label="Recognition view mode">
+                  <button class="variant-btn sel" type="button" id="variantEditable" data-variant="review">Editable</button>
+                  <button class="variant-btn" type="button" id="variantUnedit" data-variant="option2">Unedit</button>
+                </div>
+              </div>
               <div class="review-mail-meta">
                 <span class="ol-spark-av" aria-hidden="true"></span>
                 <div>
@@ -857,15 +863,14 @@
           addButton.disabled = false;
         }
       }
+      const variantButtons = app.querySelectorAll('.variant-btn[data-variant]');
+      function setVariant(mode) {
+        setReviewVariant(mode);
+        variantButtons.forEach(b => b.classList.toggle('sel', b.dataset.variant === mode));
+      }
+      variantButtons.forEach(b => b.addEventListener('click', () => setVariant(b.dataset.variant)));
       app.querySelectorAll('.ol-mail[data-mail]').forEach(mail => mail.addEventListener('click', () => {
-        if (mail.dataset.mail === 'option2') {
-          setReviewVariant('option2');
-          show('review');
-          app.querySelectorAll('.ol-mail[data-mail]').forEach(item => item.classList.toggle('sel', item === mail));
-          mail.classList.remove('is-unread');
-          return;
-        }
-        if (mail.dataset.mail === 'review') setReviewVariant('review');
+        if (mail.dataset.mail === 'review') setVariant('review');
         mail.classList.remove('is-unread');
         show(mail.dataset.mail);
       }));

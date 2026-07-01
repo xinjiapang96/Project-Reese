@@ -103,6 +103,7 @@
     .cp-newchat-plus { font-size: 29px; line-height: 1; font-weight: 300; color: #616161; }
     .cp-newchat-placeholder { font-size: 18px; color: #767676; }
     .cp-newchat-icon { width: 34px; height: 34px; border: 0; border-radius: 50%; display: grid; place-items: center; background: transparent; color: #444; }
+    .cp-newchat-icon[hidden] { display: none; }
     .cp-newchat-icon.wave { background: #f3f3f3; }
     .cp-newchat-chips { display: flex; align-items: center; gap: 9px; flex-wrap: wrap; margin: 18px 0 0 52px; }
     .cp-newchat-chip { border: 0; border-radius: 12px; background: #f5f5f5; padding: 10px 16px; color: #424242; font-size: 15px; font-weight: 500; }
@@ -119,6 +120,8 @@
     .cp-cowork-title { margin: 0 0 28px; text-align: center; font-size: 25px; line-height: 1.25; font-weight: 550; color: #242424; }
     .cp-task-input { display: grid; grid-template-columns: 34px minmax(0, 1fr) 32px 32px; align-items: center; gap: 12px; min-height: 62px; border: 1px solid #d0d0d0; border-radius: 999px; padding: 0 18px; box-shadow: 0 1px 2px rgba(0,0,0,.04); color: #616161; }
     .cp-task-placeholder { font-size: 15px; color: #777; }
+    .cp-task-input.is-filled { align-items: start; border-radius: 18px; padding-top: 14px; padding-bottom: 14px; }
+    .cp-task-typed { font-size: 14px; color: var(--cp-fg); white-space: pre-wrap; line-height: 1.5; }
     .cp-rec-notif { display: flex; align-items: center; gap: 14px; margin-top: 16px; padding: 14px 18px; border: 1px solid #d6e4f7; border-radius: 16px; background: linear-gradient(180deg, #f5f9ff, #fff); box-shadow: 0 1px 2px rgba(0,0,0,.04); }
     .cp-rec-notif-ic { font-size: 18px; flex: none; }
     .cp-rec-notif-body { flex: 1; min-width: 0; }
@@ -343,7 +346,7 @@
         <button class="cp-nav-item is-active" type="button" data-go="newchat" data-nav="newchat"><svg class="cp-i" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>New chat</button>
         <button class="cp-nav-item" type="button"><svg class="cp-i" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.2-4.2"/></svg>Search</button>
         <button class="cp-nav-item" type="button"><svg class="cp-i" viewBox="0 0 24 24"><rect x="4" y="4" width="3.4" height="16" rx="1"/><rect x="10.3" y="4" width="3.4" height="16" rx="1"/><path d="M17 5.4l3 .8-3.1 13.8-3-.8z"/></svg>Library</button>
-        <button class="cp-nav-item" type="button" data-go="tasks" data-nav="tasks"><svg class="cp-i" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="17" height="17" rx="4"/><path d="m8 12 2.8 2.8L16 9"/></svg>Tasks<span class="cp-badge" aria-label="Update available"></span></button>
+        <button class="cp-nav-item" type="button" style="pointer-events:none"><svg class="cp-i" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="17" height="17" rx="4"/><path d="m8 12 2.8 2.8L16 9"/></svg>Tasks</button>
         <button class="cp-nav-item" type="button"><svg class="cp-i" viewBox="0 0 24 24"><path d="m9 8-4 4 4 4"/><path d="m15 8 4 4-4 4"/></svg>Agents</button>
       </nav>
       <nav class="cp-nav cp-cowork-nav cowork-only">
@@ -461,19 +464,11 @@
             <button class="cp-newbtn" type="button"><svg class="cp-i" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>New</button>
           </div>
           <div class="cp-stats">
-            <div class="cp-stat attention"><div class="lbl">Needs attention</div><div class="num">1</div></div>
+            <div class="cp-stat attention"><div class="lbl">Needs attention</div><div class="num">0</div></div>
             <div class="cp-stat"><div class="lbl">Complete</div><div class="num">0</div></div>
             <div class="cp-stat"><div class="lbl">In progress</div><div class="num">0</div></div>
           </div>
           <div class="cp-stats-note">Based on tasks loaded below</div>
-
-          <div class="cp-rec-task">
-            <span class="cp-rec-msg">Recognize contributors from Project Reeces</span>
-            <span class="cp-attention-pill">Needs attention</span>
-            <span class="cp-rec-time">Jun 25, 2026</span>
-            <span class="cp-copilot-ic"></span>
-            <button class="cp-btn-primary" type="button" data-action="review">Review</button>
-          </div>
 
         </div>
       </section>
@@ -508,10 +503,10 @@
                 <div class="cp-agent-by">Created by Microsoft <span class="cp-agent-check">✓</span></div>
               </div>
             </div>
-            <div class="cp-task-input" data-go="chat" role="button" tabindex="0" aria-label="Start a recognition">
+            <div class="cp-task-input" id="cpRecHomeInput" role="button" tabindex="0" aria-label="Start a recognition">
               <span class="cp-newchat-plus" aria-hidden="true">+</span>
-              <span class="cp-task-placeholder">Who would you like to recognize today?</span>
-              <button class="cp-newchat-icon" type="button" data-go="chat" aria-label="Draft with Copilot"><svg class="cp-i" viewBox="0 0 24 24"><path d="M12 3l1.4 4.1L17.5 8.5l-4.1 1.4L12 14l-1.4-4.1-4.1-1.4 4.1-1.4z"/><path d="M18 14l.8 2.2L21 17l-2.2.8L18 20l-.8-2.2L15 17l2.2-.8z"/></svg></button>
+              <span class="cp-task-placeholder" id="cpRecHomePrompt">Who would you like to recognize today?</span>
+              <button class="cp-newchat-icon" id="cpRecHomeSend" type="button" hidden aria-label="Send"><svg class="cp-i" viewBox="0 0 24 24"><path d="M12 19V6"/><path d="m6 12 6-6 6 6"/></svg></button>
               <button class="cp-newchat-icon" type="button" aria-label="Voice input"><svg class="cp-i" viewBox="0 0 24 24"><path d="M12 3a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V6a3 3 0 0 0-3-3Z"/><path d="M19 11a7 7 0 0 1-14 0"/><path d="M12 18v3"/></svg></button>
             </div>
             <div class="cp-rec-notif">
@@ -520,7 +515,7 @@
                 <div class="cp-rec-notif-title">A recognition opportunity is ready</div>
                 <div class="cp-rec-notif-sub">Based on your recent collaboration on Project Reeces, we recommend recognizing <strong>Jamie</strong>.</div>
               </div>
-              <button class="cp-rec-notif-btn" type="button" data-go="chat">Complete</button>
+              <button class="cp-rec-notif-btn" id="cpRecComplete" type="button">Complete</button>
             </div>
             <div class="cp-rec-grid">
               <button class="cp-rec-card" type="button" data-go="chat"><div class="cp-rec-card-top"><span class="cp-rec-card-ic">🔎</span><span class="cp-rec-card-title">Find contributors</span></div><div class="cp-rec-card-sub">Who made meaningful contributions to my recent projects?</div></button>
@@ -952,6 +947,30 @@ Recommend recipients and generate personalized recognition drafts.`;
       }));
       app.querySelectorAll('[data-go="recognition"]').forEach(b => b.addEventListener('click', () => showScreen('recognition-home')));
       app.querySelectorAll('[data-go="chat"]').forEach(b => b.addEventListener('click', () => showScreen('chat')));
+
+      // Recognition agent home: Complete -> fill prompt in type box; Send -> chat + first AI output
+      const recHomeInput = app.querySelector('#cpRecHomeInput');
+      const recHomePrompt = app.querySelector('#cpRecHomePrompt');
+      const recHomeSend = app.querySelector('#cpRecHomeSend');
+      const recComplete = app.querySelector('#cpRecComplete');
+      if (recComplete) recComplete.addEventListener('click', () => {
+        if (recHomePrompt) {
+          recHomePrompt.textContent = PROMPT;
+          recHomePrompt.classList.remove('cp-task-placeholder');
+          recHomePrompt.classList.add('cp-task-typed');
+        }
+        if (recHomeInput) recHomeInput.classList.add('is-filled');
+        if (recHomeSend) recHomeSend.hidden = false;
+      });
+      if (recHomeSend) recHomeSend.addEventListener('click', () => {
+        app.dataset.coworkRecognition = '0';
+        app.dataset.workspace = '0';
+        showScreen('chat', 'chat', 'recognition');
+        chatStep = 0; revealChat(0);
+        ['#cpTyping1', '#cpRec1', '#cpTyping2', '#cpDivider', '#cpRec2', '#cpDivider2', '#cpTyping3', '#cpRec3', '#cpTypingDraft', '#cpDraftIntro', '#cpDraftCard', '#cpConfirmationDivider', '#cpConfirmationTyping', '#cpCoworkConfirmationDivider', '#cpCoworkConfirmationTyping', '#cpCoworkConfirmation'].forEach(s => { const el = app.querySelector(s); if (el) el.classList.remove('show'); });
+        app.querySelectorAll('[data-action="send-recognition"]').forEach(btn => { btn.disabled = false; });
+        send();
+      });
       app.querySelectorAll('.cp-point-card').forEach(c => c.addEventListener('click', () => {
         app.querySelectorAll('.cp-point-card').forEach(x => x.classList.remove('sel'));
         c.classList.add('sel');
